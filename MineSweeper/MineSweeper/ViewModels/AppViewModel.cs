@@ -1,6 +1,8 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MineSweeper.Models;
+using MineSweeper.Models.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,13 +10,15 @@ using System.Linq;
 
 namespace MineSweeper.ViewModels;
 
-public partial class AppViewModel : ObservableObject
+public partial class AppViewModel : ObservableRecipient
 {
-    // 4보다 커야한다.
+    // TODO : validation 필요.
+
+    // 최소 4보다 커야한다.
     [ObservableProperty]
     private int _columns = 10;
 
-    // 4보다 커야한다.
+    // 최소 4보다 커야한다.
     [ObservableProperty]
     private int _rows = 10;
 
@@ -27,23 +31,50 @@ public partial class AppViewModel : ObservableObject
     [ObservableProperty]
     private int _uniformRows;
 
+    [ObservableProperty]
+    private bool _usePlayers;
+
+    private bool _isShowAll;
+    public bool IsShowAll
+    {
+        get => _isShowAll;
+        set
+        {
+            SetProperty(ref _isShowAll, value);
+            foreach (var box in Boxes)
+            {
+                box.IsOpened = value;
+            }
+        }
+    }
+
     private Box[,]? _composition;
 
     private List<MinePosition> _startingArea = new List<MinePosition>(16);
 
     public ObservableCollection<Box> Boxes { get; } = new ObservableCollection<Box>();
 
+    public AppViewModel()
+    {
+        this.IsActive = true;
+    }
+
+    protected override void OnActivated()
+    {
+        Messenger.Register<AppViewModel, OpenBoxMessage>(this, (r, m) => r.OpenBox(m.Opened));
+    }
+
     [ICommand]
     private void ApplyLayout()
-    {        
+    {
         Boxes.Clear();
         _startingArea.Clear();
 
         _composition = new Box[_columns, _rows];
 
-        for (var i = 0; i < _columns; i++)
+        for (var j = 0; j < _rows; j++)
         {
-            for (var j = 0; j < _rows; j++)
+            for (var i = 0; i < _columns; i++)
             {
                 var newBlock = new Box(i, j);
                 Boxes.Add(newBlock);
@@ -52,12 +83,60 @@ public partial class AppViewModel : ObservableObject
             }
         }
 
-        _uniformColumns = _columns;
-        _uniformRows = _rows;
+        UniformColumns = _columns;
+        UniformRows = _rows;
 
-        GenerateStartArea();
+        if (_usePlayers)
+        {
+            GenerateStartArea();
+        }
 
         SetMinePosition();
+    }
+
+    private void OpenBox(Box box)
+    {
+        box.IsOpened = true;
+
+        if (box.IsMine)
+        {
+            foreach (var otherBox in Boxes)
+            {
+                otherBox.IsOpened = true;
+            }
+
+            // game over
+            return;
+        }
+
+        if (box.Number is 0)
+        {
+            // 인근 박스를 모두 연다.            
+            OpenAroundBoxes(box.X, box.Y);
+        }
+    }
+
+    private void OpenAroundBoxes(int column, int row)
+    {
+        var aroundBoxes = GetAroundBoxes(column, row);
+        foreach (var aroundBox in aroundBoxes)
+        {
+            if (aroundBox is null)
+            {
+                continue;
+            }
+
+            if (aroundBox.IsOpened) // 이미 열려 있으면 스킵.
+            {
+                continue;
+            }
+
+            aroundBox.IsOpened = true;
+            if (aroundBox.Number is 0)
+            {
+                OpenAroundBoxes(aroundBox.X, aroundBox.Y);
+            }
+        }
     }
 
     private void SetMinePosition()
@@ -72,8 +151,6 @@ public partial class AppViewModel : ObservableObject
         {
             while (i < _mineCount)
             {
-                //var x = new Random(DateTime.UtcNow.Millisecond + i).Next(0, _columns);
-                //var y = new Random(DateTime.UtcNow.Millisecond + i).Next(0, _rows);
                 var x = new Random().Next(0, _columns);
                 var y = new Random().Next(0, _rows);
                 var position = new MinePosition(x, y);
@@ -103,7 +180,7 @@ public partial class AppViewModel : ObservableObject
             box.IsMine = true;
 
             var aroundBoxes = GetAroundBoxes(column, row);
-            foreach(var aroundBox in aroundBoxes)
+            foreach (var aroundBox in aroundBoxes)
             {
                 if (aroundBox is null)
                 {
@@ -129,16 +206,16 @@ public partial class AppViewModel : ObservableObject
         var bottom = row + 1;
 
         // 정해진 column / row 를 둘러싼 8개 box 를 획득한다.
-        boxes[0] = left < 0 ? null : ( top < 0 ? null  : _composition[left, top]); // left top
-        boxes[1] = top < 0 ? null  : _composition[column, top]; // middle top
-        boxes[2] = right > _columns - 1 ? null : (top < 0 ? null  : _composition[right, top]); // right top
+        boxes[0] = left < 0 ? null : (top < 0 ? null : _composition[left, top]); // left top
+        boxes[1] = top < 0 ? null : _composition[column, top]; // middle top
+        boxes[2] = right > _columns - 1 ? null : (top < 0 ? null : _composition[right, top]); // right top
 
         boxes[3] = left < 0 ? null : _composition[left, row]; // left middle
         boxes[4] = right > _columns - 1 ? null : _composition[right, row];// right middle
 
-        boxes[5] = left < 0 ? null : ( bottom > _rows - 1 ? null  : _composition[left, bottom]); ;// left bottom
-        boxes[6] = bottom > _rows - 1 ? null  : _composition[column, bottom];// middle bottom
-        boxes[7] = right > _columns - 1 ? null : (bottom > _rows - 1 ? null  : _composition[right, bottom]);// right bottom
+        boxes[5] = left < 0 ? null : (bottom > _rows - 1 ? null : _composition[left, bottom]); ;// left bottom
+        boxes[6] = bottom > _rows - 1 ? null : _composition[column, bottom];// middle bottom
+        boxes[7] = right > _columns - 1 ? null : (bottom > _rows - 1 ? null : _composition[right, bottom]);// right bottom
 
         return boxes;
     }

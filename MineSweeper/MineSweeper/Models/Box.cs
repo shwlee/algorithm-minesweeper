@@ -18,8 +18,11 @@ public partial class Box : ObservableObject
 
     public Box(int column, int row)
     {
-        Position = new MinePosition(column, row);
+        X = column;
+        Y = row;
     }
 
-    public MinePosition Position { get; }
+    public int X { get; }
+
+    public int Y { get; }
 }
