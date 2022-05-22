@@ -50,7 +50,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         var loadedPlayers = _playerLoader.LoadPlayers();
         var players = loadedPlayers.Select((player, i) => new TurnPlayer(player, i))
                         .OrderBy(player => new Random().Next(columns * rows)); // random 배치.
-        
+
         foreach (var player in players)
         {
             player.Turn.Initialize(player.Index, columns, rows);

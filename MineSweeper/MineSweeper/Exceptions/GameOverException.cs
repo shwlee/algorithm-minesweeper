@@ -10,7 +10,6 @@ public class GameOverException : Exception
     public int? GameOverPlayer { get; }
     public GameOverException(int? gameOverPlayer) : this(gameOverPlayer, null)
     {
-
     }
 
     public GameOverException(int? gameOverPlayer, string? message) : this(gameOverPlayer, message, null)

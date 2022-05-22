@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MineSweeper.Contracts;
-using MineSweeper.Services.Turns;
 using MineSweeper.Utils.Players;
 using MineSweeper.ViewModels;
 using System;
 using System.Windows;
 
 namespace MineSweeper;
+
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
@@ -34,10 +34,10 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
-        services.AddSingleton<AppViewModel>();        
+        services.AddSingleton<AppViewModel>();
         services.AddSingleton<IPlayerLoader, PlayerLoader>();
         services.AddSingleton<IGameState, GameViewModel>();
-        services.AddSingleton<ITurnProcess, TurnPlayViewModel>();        
+        services.AddSingleton<ITurnProcess, TurnPlayViewModel>();
 
         return services.BuildServiceProvider();
     }
