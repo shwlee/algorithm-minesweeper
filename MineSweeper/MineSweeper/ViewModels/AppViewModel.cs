@@ -1,6 +1,7 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
+using MineSweeper.Exceptions;
 using MineSweeper.Models;
 using MineSweeper.Models.Messages;
 using System;
@@ -61,7 +62,8 @@ public partial class AppViewModel : ObservableRecipient
 
     protected override void OnActivated()
     {
-        Messenger.Register<AppViewModel, OpenBoxMessage>(this, (r, m) => r.OpenBox(m.Opened));
+        Messenger.Register<AppViewModel, OpenBoxMessage>(this, (r, m) => r.OpenBox(m.Target));
+        Messenger.Register<AppViewModel, MarkBoxMessage>(this, (r, m) => r.MarkBox(m.Target));
     }
 
     [ICommand]
@@ -96,24 +98,50 @@ public partial class AppViewModel : ObservableRecipient
 
     private void OpenBox(Box box)
     {
-        box.IsOpened = true;
-
-        if (box.IsMine)
+        try
         {
-            foreach (var otherBox in Boxes)
+            if (box.IsMarked) // marking 된 box 는 열지 않는다.
             {
-                otherBox.IsOpened = true;
+                return;
             }
 
-            // game over
+            box.IsOpened = true;
+
+            if (box.IsMine)
+            {
+                foreach (var otherBox in Boxes)
+                {
+                    otherBox.IsOpened = true;
+                }
+
+                // game over
+                return;
+            }
+
+            if (box.Number is 0)
+            {
+                // 인근 박스를 모두 연다.            
+                OpenAroundBoxes(box.X, box.Y);
+            }
+
+            Verify();
+        }
+        catch (GameOverException gameOver)
+        {
+            // TODO : logging.
+
+            // TODO : 게임 종료 처리. (정산. 게임 종료 애니메이션 등.)
+        }
+    }
+
+    private void MarkBox(Box box)
+    {
+        if (box.IsOpened)
+        {
             return;
         }
 
-        if (box.Number is 0)
-        {
-            // 인근 박스를 모두 연다.            
-            OpenAroundBoxes(box.X, box.Y);
-        }
+        box.IsMarked = box.IsMarked == false;
     }
 
     private void OpenAroundBoxes(int column, int row)
@@ -261,5 +289,10 @@ public partial class AppViewModel : ObservableRecipient
             new MinePosition(right, bottom),
         };
         _startingArea.AddRange(aroundRightBottom);
+    }
+
+    private void Verify()
+    {
+        // TODO : 게임 정상 상태 판단
     }
 }

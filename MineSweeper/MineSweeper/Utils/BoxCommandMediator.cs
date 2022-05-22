@@ -11,4 +11,9 @@ public class BoxCommandMediator : ObservableRecipient
     {
         Messenger.Send(new OpenBoxMessage(box));
     }
+
+    public void MarkBox(Box box)
+    {
+        Messenger.Send(new MarkBoxMessage(box));
+    }
 }

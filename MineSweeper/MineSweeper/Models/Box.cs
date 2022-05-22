@@ -8,7 +8,7 @@ public partial class Box : ObservableObject
     private bool _isMine;
 
     [ObservableProperty]
-    private bool _isMark;
+    private bool _isMarked;
 
     [ObservableProperty]
     private int _number;

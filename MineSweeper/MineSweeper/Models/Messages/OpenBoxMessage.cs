@@ -1,8 +1,8 @@
 ﻿namespace MineSweeper.Models.Messages;
 
-public class OpenBoxMessage
+public class OpenBoxMessage : BoxMessage
 {
-    public Box Opened { get; }
-
-    public OpenBoxMessage(Box opened) => Opened = opened;
+    public OpenBoxMessage(Box opened) : base(opened)
+    {
+    }
 }
