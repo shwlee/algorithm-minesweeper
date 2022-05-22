@@ -162,54 +162,66 @@
         </ItemsControl>
 
         <Grid Grid.Row="2">
-            <StackPanel Orientation="Horizontal">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Orientation="Horizontal"
+                Grid.Column="0">
                 <StackPanel
-                    Orientation="Horizontal"
+                    VerticalAlignment="Center"
                     Margin="10,0">
-                    <CheckBox
-                        Content="Show All "
-                        IsChecked="{Binding Game.IsShowAll}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <CheckBox
-                        Content="Use Players"
-                        IsChecked="{Binding Game.UsePlayers}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Column : "
-                        VerticalAlignment="Center" />
-                    <TextBox
-                        Width="100"
-                        Text="{Binding Game.Columns}"
-                        VerticalAlignment="Center" />
+                    <Button
+                        Width="70"
+                        Content="Load"
+                        Command="{Binding Turn.LoadPlayersCommand}" />
+
                 </StackPanel>
                 <StackPanel
                     Orientation="Horizontal"
                     Margin="10,0">
-                    <TextBlock
-                        Text="Row : "
-                        VerticalAlignment="Center" />
-                    <TextBox
-                        Width="100"
-                        Text="{Binding Game.Rows}"
-                        VerticalAlignment="Center" />
+                    <ItemsControl ItemsSource="{Binding Turn.Players}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:TurnPlayer}">
+                                <Grid>
+                                    <Border
+                                        BorderThickness="1"
+                                        Margin="5">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock>
+                                                <Run Text="{Binding Name}" />
+                                                <Run Text=" : " />
+                                                <Run Text="{Binding Score}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <TextBlock
-                        Text="Mine count : "
-                        VerticalAlignment="Center" />
-                    <TextBox
-                        Width="100"
-                        Text="{Binding Game.MineCount}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right">
+                <Button
+                    Width="40"
+                    Margin="5"
+                    Content="Next"
+                    Command="{Binding Turn.TurnCommand}" />
+                <Button
+                    Width="40"
+                    Margin="5"
+                    Content="{Binding Turn.AutoSpeed}"
+                    Command="{Binding Turn.AutoTurnCommand}" />
             </StackPanel>
         </Grid>
     </Grid>

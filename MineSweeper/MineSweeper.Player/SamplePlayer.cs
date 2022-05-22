@@ -10,9 +10,16 @@ public class SamplePlayer : IPlayer
 
     private int _row;
 
+    private string _name;
+
+    public SamplePlayer(string name)
+    {
+        _name = name;
+    }
+
     public string GetName()
     {
-        return "NXP Greg C# sample";
+        return _name;
     }
 
     public void Initialize(int myNumber, int column, int row)

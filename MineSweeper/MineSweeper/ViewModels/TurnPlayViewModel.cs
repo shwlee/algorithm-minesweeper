@@ -14,6 +14,9 @@ public partial class TurnPlayViewModel : ObservableObject, ITurnProcess
     private IPlayerLoader _playerLoader;
 
     [ObservableProperty]
+    private AutoPlay _autoSpeed;
+
+    [ObservableProperty]
     private ObservableCollection<TurnPlayer>? _players;
 
     public TurnPlayViewModel(IGameState gameState, IPlayerLoader playerLoader)
@@ -27,16 +30,22 @@ public partial class TurnPlayViewModel : ObservableObject, ITurnProcess
     {
         var loadedPlayers = _playerLoader.LoadPlayers();
         var players = loadedPlayers.Select((player, i) => new TurnPlayer(player, i));
-        _players = new ObservableCollection<TurnPlayer>(players);
+        Players = new ObservableCollection<TurnPlayer>(players);
     }
 
-    void ITurnProcess.LoadPlayers()
+    [ICommand]
+    private void Turn()
     {
-        throw new System.NotImplementedException();
+
+    }
+
+    [ICommand]
+    private void AutoTurn()
+    {
+
     }
 
     public void Start()
     {
-        throw new System.NotImplementedException();
     }
 }
