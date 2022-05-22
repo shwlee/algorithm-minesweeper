@@ -5,6 +5,11 @@ namespace MineSweeper.Utils.Players.JS;
 
 public class JavascriptPlayer : IPlayer
 {
+    public string GetName()
+    {
+        throw new NotImplementedException();
+    }
+
     public void Initialize(int myNumber, int column, int row)
     {
         throw new NotImplementedException();

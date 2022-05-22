@@ -1,8 +1,6 @@
-﻿using MineSweeper.Player;
+﻿namespace MineSweeper.Player;
 
-namespace NXP.CSharp.MineSweeper;
-
-public class Player : IPlayer
+public class SamplePlayer : IPlayer
 {
     // sample!
 
@@ -14,7 +12,7 @@ public class Player : IPlayer
 
     public string GetName()
     {
-        return "NXP Greg";
+        return "NXP Greg C# sample";
     }
 
     public void Initialize(int myNumber, int column, int row)
