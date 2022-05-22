@@ -24,7 +24,7 @@ public class Player : IPlayer
         _row = row;
     }
 
-    public PlayContext Turn(int[] board, int turnCount, int myScore)
+    public PlayContext Turn(int[] board, int turnCount)
     {
         var action = (PlayerAction)new Random().Next(0, 2);
         var position = new Random().Next(0, board.Length - 1);

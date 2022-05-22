@@ -15,7 +15,7 @@ public class JavascriptPlayer : IPlayer
         throw new NotImplementedException();
     }
 
-    public PlayContext Turn(int[] board, int turnCount, int myScore)
+    public PlayContext Turn(int[] board, int turnCount)
     {
         throw new NotImplementedException();
     }

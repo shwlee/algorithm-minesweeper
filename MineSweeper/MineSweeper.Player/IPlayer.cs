@@ -20,10 +20,9 @@ public interface IPlayer
     /// 현재 턴의 동작을 결정한다.
     /// </summary>
     /// <param name="board">배치 현황. 전체 배치 정보가 1차원 배열로 할당되어 전달된다. 자세한 정보는 아래 참조.</param>
-    /// <param name="turnCount">현재 턴. 턴은 1부터 시작한다.</param>
-    /// <param name="myScore">현재 턴 이전까지 자신의 점수.</param>
+    /// <param name="turnCount">현재 턴. 턴은 1부터 시작한다.</param>    
     /// <returns>현재 턴 동작. 자세한 정보는 아래 참조.</returns>
-    PlayContext Turn(int[] board, int turnCount, int myScore);
+    PlayContext Turn(int[] board, int turnCount);
 
     /*
     int[] borad

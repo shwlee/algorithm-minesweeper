@@ -22,8 +22,7 @@ function GetName() {
 // 각 턴의 행동을 결정.
 // int[]: board = 현재 보드의 정보. 자세한 내용은 아래 주석 참조.
 // int: turneCount = 현재 턴.
-// int: myScore = 현재까지 획득한 점수.
-function Turn(board, turnCount, myScore) {
+function Turn(board, turnCount) {
     let action = Math.random() * 2;
     let position = Math.random() * (board.length - 1);
     return {
