@@ -7,7 +7,7 @@ public partial class TurnPlayer : ObservableObject
 {
     public IPlayer Turn { get; }
 
-    private int _index;
+    public int Index { get; }
 
     [ObservableProperty]
     private string? _name;
@@ -15,10 +15,13 @@ public partial class TurnPlayer : ObservableObject
     [ObservableProperty]
     private int _score;
 
+    public bool IsClosePlayer { get; set; }
+
     public TurnPlayer(IPlayer player, int index)
     {
         Turn = player;
-        _index = index;
+        Index = index;
+
         _name = player.GetName();
     }
 }

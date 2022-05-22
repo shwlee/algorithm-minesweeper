@@ -10,3 +10,10 @@ public enum AutoPlay
     
     X3 = 3,
 }
+
+public enum GameStateMessage
+{
+    Start,
+
+    GameOver
+}

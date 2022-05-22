@@ -5,10 +5,12 @@ using MineSweeper.Contracts;
 using MineSweeper.Exceptions;
 using MineSweeper.Models;
 using MineSweeper.Models.Messages;
+using MineSweeper.Player;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace MineSweeper.ViewModels;
 
@@ -49,6 +51,9 @@ public partial class GameViewModel : ObservableRecipient, IGameState
             }
         }
     }
+
+    private bool _isInitialized;
+    public bool IsInitialized => _isInitialized;
 
     /// <summary>
     /// Player 에게 전달할 보드 현황. 매 플레이어 호출 직후 업데이트한다.
@@ -113,6 +118,8 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         SetMinePosition();
 
         InitBoardData();
+
+        _isInitialized = true;
     }
 
     private void InitBoardData()
@@ -152,17 +159,10 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     }
 
 
-    private void OpenBox(Box box)
+    private void OpenBox(Box box, [Optional] int? player)
     {
         try
         {
-            if (box.IsMarked) // marking 된 box 는 열지 않는다.
-            {
-                return;
-            }
-
-            box.IsOpened = true;
-
             if (box.IsMine)
             {
                 foreach (var otherBox in _boxList)
@@ -171,13 +171,24 @@ public partial class GameViewModel : ObservableRecipient, IGameState
                 }
 
                 // game over
+                throw new GameOverException(player);
+            }
+
+            if (box.IsMarked) // marking 된 box 는 열지 않는다.
+            {
                 return;
+            }
+
+            box.IsOpened = true;
+            if (player is not null)
+            {
+                box.Owner = player.Value;
             }
 
             if (box.Number is 0)
             {
                 // 인근 박스를 모두 연다.            
-                OpenAroundBoxes(box.X, box.Y);
+                OpenAroundBoxes(box.X, box.Y, player);
             }
 
             UpdateBoardData();
@@ -186,13 +197,16 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         }
         catch (GameOverException gameOver)
         {
+            _isInitialized = false;
+
+            Messenger.Send<GameMessage>(new GameMessage(GameStateMessage.GameOver));
             // TODO : logging.
 
             // TODO : 게임 종료 처리. (정산. 게임 종료 애니메이션 등.)
         }
     }
 
-    private void MarkBox(Box box)
+    private void MarkBox(Box box, [Optional] int? player)
     {
         if (box.IsOpened)
         {
@@ -200,11 +214,15 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         }
 
         box.IsMarked = box.IsMarked == false;
+        if (player is not null)
+        {
+            box.Owner = player.Value;
+        }
 
         UpdateBoardData();
     }
 
-    private void OpenAroundBoxes(int column, int row)
+    private void OpenAroundBoxes(int column, int row, int? player)
     {
         var aroundBoxes = GetAroundBoxes(column, row);
         foreach (var aroundBox in aroundBoxes)
@@ -220,9 +238,14 @@ public partial class GameViewModel : ObservableRecipient, IGameState
             }
 
             aroundBox.IsOpened = true;
+            if (player is not null)
+            {
+                aroundBox.Owner = player.Value;
+            }
+
             if (aroundBox.Number is 0)
             {
-                OpenAroundBoxes(aroundBox.X, aroundBox.Y);
+                OpenAroundBoxes(aroundBox.X, aroundBox.Y, player);
             }
         }
     }
@@ -354,5 +377,38 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     private void Verify()
     {
         // TODO : 게임 정상 상태 판단
+    }
+
+    public (int column, int row) GetColumRows()
+    {
+        if (_isInitialized is false)
+        {
+            throw new GameNotInitializedExceptionException();
+        }
+
+        return (_columns, _rows);
+    }
+
+    public void Set(PlayContext context, int playerIndex)
+    {
+        var position = context.Position;
+        var box = _boxList[position];
+        if (box is null)
+        {
+            throw new WrongResultReturnExceptionException(playerIndex);
+        }
+
+        var action = context.Action;
+        switch (action)
+        {
+            case PlayerAction.Open:
+                OpenBox(box, playerIndex);
+                break;
+            case PlayerAction.Mark:
+                MarkBox(box, playerIndex);
+                break;
+            case PlayerAction.Close:
+                break;
+        }
     }
 }
