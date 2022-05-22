@@ -1,6 +1,6 @@
 ﻿using MineSweeper.Player;
 
-namespace NXP.Mimesweeper;
+namespace NXP.CSharp.MineSweeper;
 
 public class Player : IPlayer
 {
@@ -21,7 +21,7 @@ public class Player : IPlayer
 
     public PlayContext Turn(int[] board, int turnCount, int myScore)
     {
-        var action = (PlayerAction)(new Random().Next(0, 2));
+        var action = (PlayerAction)new Random().Next(0, 2);
         var position = new Random().Next(0, board.Length - 1);
         return new PlayContext(action, position);
     }
