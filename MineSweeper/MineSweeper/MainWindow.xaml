@@ -19,7 +19,8 @@
                 <Border
                     x:Name="Part_Number"
                     BorderThickness="1"
-                    BorderBrush="#FF262626">
+                    BorderBrush="#FF262626"
+                    Background="White">
 
                     <TextBlock
                         Text="{Binding Number}"
@@ -154,7 +155,7 @@
                 <ItemsPanelTemplate>
                     <UniformGrid
                         Grid.Row="1"
-                        Background="Chartreuse"
+                        Background="#FFBFBFBF"
                         Columns="{Binding Game.UniformColumns}"
                         Rows="{Binding Game.UniformRows}" />
                 </ItemsPanelTemplate>
@@ -164,7 +165,7 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
             <StackPanel
                 Orientation="Horizontal"
@@ -206,6 +207,17 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="10,0">
+                    <TextBlock
+                        Text="Turn : "
+                        VerticalAlignment="Center" />
+                    <TextBox
+                        Width="100"
+                        Text="{Binding Turn.TurnCount}"
+                        VerticalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
 
             <StackPanel
@@ -213,10 +225,15 @@
                 Orientation="Horizontal"
                 HorizontalAlignment="Right">
                 <Button
-                    Width="40"
+                    Width="60"
                     Margin="5"
-                    Content="Next"
-                    Command="{Binding Turn.TurnCommand}" />
+                    Content="Next1"
+                    Command="{Binding Turn.TurnOneCommand}" />
+                <Button
+                    Width="60"
+                    Margin="5"
+                    Content="Next all"
+                    Command="{Binding Turn.TurnAllCommand}" />
                 <Button
                     Width="40"
                     Margin="5"

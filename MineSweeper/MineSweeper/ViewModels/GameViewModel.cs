@@ -411,4 +411,10 @@ public partial class GameViewModel : ObservableRecipient, IGameState
                 break;
         }
     }
+
+    public bool IsGameOver()
+    {
+
+        return _boxList.Any(box => box.IsMine && box.IsOpened);
+    }
 }

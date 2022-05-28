@@ -11,4 +11,6 @@ public interface IGameState
     int[]? GetBoard();
 
     void Set(PlayContext context, int playerIndex);
+
+    bool IsGameOver();
 }
