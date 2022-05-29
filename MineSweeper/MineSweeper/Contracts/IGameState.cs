@@ -12,7 +12,9 @@ public interface IGameState
 
     int[]? GetBoard();
 
+    int GetScore(int playerIndex);
+
     void Set(PlayContext context, int playerIndex);
 
-    bool IsGameOver();    
+    bool IsGameOver();
 }

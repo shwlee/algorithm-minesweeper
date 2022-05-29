@@ -27,7 +27,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
     private int _maxTurn;
 
-    private int _turnCount;
+    private int _turnCount = 1;
 
     private CancellationTokenSource _autoPlayCancelTokenSource = new CancellationTokenSource();
 
@@ -50,8 +50,11 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         get => _turnCount;
         set
         {
-            SetProperty(ref _turnCount, value);
-            UpdateTurnChanging();
+            var changed = SetProperty(ref _turnCount, value);
+            if (changed)
+            {
+                UpdateTurnChanging();
+            }
         }
     }
 
@@ -77,7 +80,10 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             case GameStateMessage.Set:
                 _lastTurnPlayer = 0;
                 AutoSpeed = AutoPlay.Stop;
-                TurnCount = 0;
+                TurnCount = 1;
+                // TODO : players 정리해야하나
+                // player load / clear 에 대한 별도 기능 필요.
+                LoadPlayers();
 
                 break;
             case GameStateMessage.Start:
@@ -113,10 +119,14 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         {
             var board = GetCurrentBoard();
 
-            if (_lastTurnPlayer >= Players!.Count - 1)
+            if (Players!.Count > 1)
             {
-                _lastTurnPlayer = 0;
-                TurnCount++;
+                // 수동턴에 의한 lastTurnPlayer 와 TurnCount 보정.
+                if (_lastTurnPlayer >= Players!.Count - 1)
+                {
+                    _lastTurnPlayer = 0;
+                    TurnCount++;
+                }
             }
 
             ExecuteTurn(board, false);
@@ -128,7 +138,13 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
         finally
         {
-            _lastTurnPlayer++;
+            TurnCount++;
+
+            if (Players!.Count > 1)
+            {
+                _lastTurnPlayer++;
+            }
+
         }
     }
 
@@ -157,9 +173,12 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             {
                 // 수동 턴 이후 호출되었을 때, 현재 player 와 lastTurnPlayer 를 맞춘다.
                 var currentIndex = Players.IndexOf(player);
-                if (currentIndex < _lastTurnPlayer)
+                if (Players.Count > 1)
                 {
-                    continue;
+                    if (currentIndex < _lastTurnPlayer)
+                    {
+                        continue;
+                    }
                 }
 
                 var board = GetCurrentBoard();
@@ -301,6 +320,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             }
 
             _gameState.Set(action, player.Index);
+
+            player.Score = _gameState.GetScore(player.Index);
         }
         catch (TurnContinueException)
         {

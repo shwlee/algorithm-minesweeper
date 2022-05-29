@@ -144,14 +144,9 @@ public partial class GameViewModel : ObservableRecipient, IGameState
                 return box.Number;
             }
 
-            if (box.IsMine)
-            {
-                return -2;
-            }
-
             if (box.IsMarked)
             {
-                return -3;
+                return -2;
             }
 
             return -1;
@@ -178,7 +173,12 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
             if (box.IsMarked) // marking 된 box 는 열지 않는다.
             {
-                return;
+                throw new MineSweepViolationException(player, ViolationReason.TryOpenAlreadyMarked);
+            }
+
+            if (box.IsOpened)
+            {
+                throw new MineSweepViolationException(player, ViolationReason.TryOpenAlreadyOpened);
             }
 
             box.IsOpened = true;
@@ -336,7 +336,8 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     private void GenerateStartArea()
     {
         // 금지구역 설정.
-        // 일단 player 가 4명이라고 가정. TODO : player 수에 맞게 인자로 받아서 처리.
+        // player 수와 관계없이 4 귀퉁이 영역은 시작 구역이 된다.
+
         var aroundLeftTop = new MinePosition[]
         {
             new MinePosition(0, 0),
@@ -397,7 +398,14 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         var box = _boxList[position];
         if (box is null)
         {
-            throw new WrongResultReturnExceptionException(playerIndex);
+            var reason = context.Action switch
+            {
+                PlayerAction.Open => ViolationReason.TryOpenOutOfRange,
+                PlayerAction.Mark=> ViolationReason.TryMarkOutOfRange,
+                _ => throw new TurnContinueException()
+            };            
+
+            throw new MineSweepViolationException(playerIndex, reason);
         }
 
         var action = context.Action;
@@ -417,11 +425,27 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     public bool IsGameOver()
     {
         // mine 을 열었는지만 확인.
-        return _boxList.Any(box => box.IsMine && box.IsOpened);
+        if (_boxList.Any(box => box.IsMine && box.IsOpened))
+        {
+            return true;
+        }
+
+        if (_boxList.All(box => box.IsMine && box.IsMarked))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public int GetNumberOfTotalMines()
     {
         return _mineCount;
+    }
+
+    public int GetScore(int playerIndex)
+    {
+        var score = _boxList.Where(box => box.Owner == playerIndex && box.IsMarked is false).Sum(box => box.Number);
+        return score;
     }
 }

@@ -32,7 +32,7 @@ public partial class Box : ObservableObject
     /// box 를 열거나 mark 한 player.
     /// </summary>
     [ObservableProperty]
-    private int _owner;
+    private int _owner = -1;
 
     public Box(int column, int row)
     {
