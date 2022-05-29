@@ -8,7 +8,8 @@ public interface IPlayer
     /// <param name="myNumber">배정받은 번호.(플레이 순서)</param>
     /// <param name="column">현재 생성된 보드의 열.</param>
     /// <param name="row">현재 생성된 보드의 행.</param>
-    void Initialize(int myNumber, int column, int row);
+    /// <param name="totalMineCount>전체 지뢰 개수</param>
+    void Initialize(int myNumber, int column, int row, int totalMineCount);
 
     /// <summary>
     /// Player 의 이름을 반환한다.
@@ -33,13 +34,13 @@ public interface IPlayer
             0 >= item : 해당 box 주변에 배치된 mime 의 개수.
             0 < item : box state
             -1 : unopened
-            -2 : mine
-            -3 : mark
+            -2 : mark
+            
         예시>
             column = 5;
             row = 5; 일 때
 현재 보드
-    -3  2   -3  -1  -1
+    -2  2   -2  -1  -1
     -1  2   2  -1  -1
     -1  1   2  -1  -1
     -1  2   -1  -1  -1
@@ -50,9 +51,8 @@ public interface IPlayer
             var box = int[12]; // (3,3) 위치의 box 획득
 
             box == 4 // 열린 box. box 주위의 4개의 mine 이 존재하는 것을 의미.
-            box == -1 // 닫힌 box.
-            box == -2 // 열린 box. 현재 box 에 mine 이 들어있다. (누군가 열었다.) 게임이 종료된다.
-            box == -3 // 열린 box. 누군가 box 에 마크했다.
+            box == -1 // 닫힌 box.            
+            box == -2 // 닫힌 box. 누군가 box 에 마크했다.
     */
 
 
@@ -78,7 +78,7 @@ public interface IPlayer
         column = 5;
         row = 5; 일 때
 현재 보드
-    -3  2   -3  -1  -1
+    -2  2   -2  -1  -1
     -1  2   2  -1  -1
     -1  1   2  -1  -1
     -1  2   -1  -1  -1

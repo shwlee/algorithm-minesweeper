@@ -8,9 +8,11 @@ public interface IGameState
 
     (int column, int row) GetColumRows();
 
+    int GetNumberOfTotalMines();
+
     int[]? GetBoard();
 
     void Set(PlayContext context, int playerIndex);
 
-    bool IsGameOver();
+    bool IsGameOver();    
 }

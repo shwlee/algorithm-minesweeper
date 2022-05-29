@@ -36,7 +36,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     private int _uniformRows;
 
     [ObservableProperty]
-    private bool _usePlayers;
+    private bool _usePlayers = true;
 
     private bool _isShowAll;
     public bool IsShowAll
@@ -120,6 +120,8 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         InitBoardData();
 
         _isInitialized = true;
+
+        Messenger.Send(new GameMessage(GameStateMessage.Set));
     }
 
     private void InitBoardData()
@@ -414,7 +416,12 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
     public bool IsGameOver()
     {
-
+        // mine 을 열었는지만 확인.
         return _boxList.Any(box => box.IsMine && box.IsOpened);
+    }
+
+    public int GetNumberOfTotalMines()
+    {
+        return _mineCount;
     }
 }

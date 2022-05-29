@@ -10,7 +10,7 @@ public class JavascriptPlayer : IPlayer
         throw new NotImplementedException();
     }
 
-    public void Initialize(int myNumber, int column, int row)
+    public void Initialize(int myNumber, int column, int row, int totalMineCount)
     {
         throw new NotImplementedException();
     }

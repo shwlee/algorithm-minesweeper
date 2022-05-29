@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MineSweeper.Contracts;
+using MineSweeper.Services;
 using MineSweeper.Utils.Players;
 using MineSweeper.ViewModels;
 using System;
@@ -35,6 +36,7 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         services.AddSingleton<AppViewModel>();
+        services.AddSingleton<IDispatcherService, DispatcherService>();
         services.AddSingleton<IPlayerLoader, PlayerLoader>();
         services.AddSingleton<IGameState, GameViewModel>();
         services.AddSingleton<ITurnProcess, TurnPlayViewModel>();

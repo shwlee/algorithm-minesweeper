@@ -23,9 +23,4 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
-
-    private void Part_CoverButton_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-    {
-
-    }
 }

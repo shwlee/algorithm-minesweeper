@@ -12,16 +12,19 @@ public class Player : IPlayer
 
     private int _row;
 
+    private int _totalMineCount;
+
     public string GetName()
     {
         return "NXP Greg";
     }
 
-    public void Initialize(int myNumber, int column, int row)
+    public void Initialize(int myNumber, int column, int row, int totalMineCount)
     {
         _myNumber = myNumber;
         _column = column;
         _row = row;
+        _totalMineCount = totalMineCount;
     }
 
     public PlayContext Turn(int[] board, int turnCount)

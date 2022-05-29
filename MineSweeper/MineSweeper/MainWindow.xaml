@@ -40,16 +40,20 @@
                         VerticalAlignment="Center" />
                 </Border>
                 <Button
-                    MouseRightButtonDown="Part_CoverButton_MouseRightButtonDown"
                     x:Name="Part_CoverButton"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
                     Command="{x:Static u:BoxCommander.OpenCommand}"
                     CommandParameter="{Binding}"
                     u:BoxCommander.MarkHandleCommand="{x:Static u:BoxCommander.MarkCommand}">
                     <Grid
                         x:Name="Part_MarkPanel"
-                        Visibility="Collapsed">
+                        Visibility="Collapsed"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="#FFFFFA99">
                         <TextBlock
                             Text="F"
                             Foreground="Red"
@@ -162,7 +166,9 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <Grid Grid.Row="2">
+        <Grid
+            Grid.Row="2"
+            IsEnabled="{Binding Turn.CanControlPlay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="200" />
@@ -216,7 +222,31 @@
                     <TextBox
                         Width="100"
                         Text="{Binding Turn.TurnCount}"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center">
+                        <TextBox.Style>
+                            <Style
+                                TargetType="{x:Type TextBox}"
+                                BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Turn.TurnChanging}"
+                                        Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard Storyboard.TargetProperty="(TextBox.BorderBrush).(SolidColorBrush.Color)">
+                                                    <ColorAnimation
+                                                        To="Red"
+                                                        Duration="0:0:0.1"
+                                                        AutoReverse="True"
+                                                        RepeatBehavior="5x" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </StackPanel>
             </StackPanel>
 

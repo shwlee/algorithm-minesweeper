@@ -3,15 +3,17 @@
 var _myNumber;
 var _column;
 var _row;
+var _totalMineCount;
 
 // 초기화 함수.
 // int: myNumber = 할당받은 플레이어 번호. (플레이 순서)
 // int: column = 현재 생성된 보드의 열.
 // int: row = 현재 생성된 보드의 행.
-function Initialize(myNumber, column, row) {
+function Initialize(myNumber, column, row, totalMineCount) {
     _myNumber = myNumber;
     _column = column;
     _row = row;
+    _totalMineCount = totalMineCount;
 }
 
 // 플레이어 이름을 반환.
@@ -40,13 +42,12 @@ function Turn(board, turnCount) {
            0 >= item : 해당 box 주변에 배치된 mime 의 개수.
            0 < item : box state
            -1 : unopened
-           -2 : mine
-           -3 : mark
+           -2 : mark
     예시>
             column = 5;
             row = 5; 일 때
 현재 보드
-    -3  2   -3  -1  -1
+    -2  2   -2  -1  -1
     -1  2   2  -1  -1
     -1  1   2  -1  -1
     -1  2   -1  -1  -1
@@ -58,8 +59,7 @@ function Turn(board, turnCount) {
 
             box == 4 // 열린 box. box 주위의 4개의 mine 이 존재하는 것을 의미.
             box == -1 // 닫힌 box.
-            box == -2 // 열린 box. 현재 box 에 mine 이 들어있다. (누군가 열었다.) 게임이 종료된다.
-            box == -3 // 열린 box. 누군가 box 에 마크했다.
+            box == -2 // 닫힌 box. 누군가 box 에 마크했다.
 
 
 
@@ -89,7 +89,7 @@ function Turn(board, turnCount) {
         column = 5;
         row = 5; 일 때
 현재 보드
-    -3  2   -3  -1  -1
+    -2  2   -2  -1  -1
     -1  2   2  -1  -1
     -1  1   2  -1  -1
     -1  2   -1  -1  -1

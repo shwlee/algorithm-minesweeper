@@ -13,6 +13,8 @@ public enum AutoPlay
 
 public enum GameStateMessage
 {
+    Set,
+
     Start,
 
     GameOver
