@@ -33,7 +33,7 @@ public class PlayerLoader : IPlayerLoader
         //    new SamplePlayer(),
         //};
 
-        return players;
+        //return players;
 
         // load players
         // load c#
@@ -64,12 +64,7 @@ public class PlayerLoader : IPlayerLoader
                     break;
                 }
             }
-
-
-
-
-
-            //var playerType = assembly.GetType(playerInterface.FullName!);
+            
             if (playerType is null)
             {
                 continue;
@@ -82,17 +77,6 @@ public class PlayerLoader : IPlayerLoader
 
             players.Add(player);
         }
-
-
-
-        // test
-        //var players = new List<IPlayer>
-        //{
-        //    new SamplePlayer("test1"),
-        //    new SamplePlayer("test2"),
-        //    new SamplePlayer("test3"),
-        //    new SamplePlayer("test4"),
-        //};
 
         return players;
     }

@@ -320,12 +320,19 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
             player.Score = _gameState.GetScore(player.Index);
         }
-        catch (TurnContinueException)
+        catch (TurnContinueException continueEx)
         {
             if (useException)
             {
                 throw;
             }
+        }
+        catch (Exception ex)
+        {
+            
+            // TODO : logging;
+            // TODO : 예외를 발생시킨 플레이어는 탈락 처리.
+            throw;
         }
     }
 
