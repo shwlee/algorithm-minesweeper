@@ -117,7 +117,9 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
     {
         try
         {
-            var board = GetCurrentBoard();
+            var board = GetCurrentBoard();            
+
+            ExecuteTurn(board, false);
 
             if (Players!.Count > 1)
             {
@@ -128,8 +130,6 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                     TurnCount++;
                 }
             }
-
-            ExecuteTurn(board, false);
         }
         catch (Exception ex)
         {
@@ -137,14 +137,11 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             // TODO : 후처리.
         }
         finally
-        {
-            TurnCount++;
-
+        {    
             if (Players!.Count > 1)
             {
                 _lastTurnPlayer++;
             }
-
         }
     }
 

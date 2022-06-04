@@ -181,7 +181,10 @@ public partial class GameViewModel : ObservableRecipient, IGameState
                 throw new MineSweepViolationException(player, ViolationReason.TryOpenAlreadyOpened);
             }
 
+            UnselectOpener(player);
+
             box.IsOpened = true;
+            box.SelectedOpener = player ?? -1;
             if (player is not null)
             {
                 box.Owner = player.Value;
@@ -208,6 +211,17 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         }
     }
 
+    private void UnselectOpener(int? player)
+    {
+        var opener = _boxList.FirstOrDefault(box => box.SelectedOpener == player);
+        if (opener is null)
+        {
+            return;
+        }
+
+        opener.SelectedOpener = -1;
+    }
+
     private void MarkBox(Box box, [Optional] int? player)
     {
         if (box.IsOpened)
@@ -216,6 +230,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         }
 
         box.IsMarked = box.IsMarked == false;
+        box.SelectedMarker = box.IsMarked ? player ?? -1 : -1;
         if (player is not null)
         {
             box.Owner = player.Value;

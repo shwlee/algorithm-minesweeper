@@ -12,9 +12,9 @@ public class PlayerLoader : IPlayerLoader
         var players = new List<IPlayer>
         {
             new SamplePlayer("test1"),
-            //new SamplePlayer("test2"),
-            //new SamplePlayer("test3"),
-            //new SamplePlayer("test4"),
+            new SamplePlayer("test2"),
+            new SamplePlayer("test3"),
+            new SamplePlayer("test4"),
         };
 
         return players;

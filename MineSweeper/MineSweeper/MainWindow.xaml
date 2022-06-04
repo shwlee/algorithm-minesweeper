@@ -6,11 +6,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:MineSweeper.Models"
     xmlns:u="clr-namespace:MineSweeper.Utils"
+    xmlns:conv="clr-namespace:MineSweeper.Converters"
     mc:Ignorable="d"
     Title="MainWindow"
     Height="450"
     Width="800">
     <Window.Resources>
+        <Color x:Key="FirstPlayerColor">#FFF51919</Color>
+        <Color x:Key="SecondPlayerColor">#FF0055FF</Color>
+        <Color x:Key="ThirdPlayerColor">#FFFFF200</Color>
+        <Color x:Key="FourthPlayerColor">#FFDE01E1</Color>
+
         <DataTemplate DataType="{x:Type models:Box}">
             <!--  TODO : box control 따로 제작.  -->
             <Grid
@@ -18,14 +24,35 @@
                 Margin="2">
                 <Border
                     x:Name="Part_Number"
-                    BorderThickness="1"
-                    BorderBrush="#FF262626"
+                    BorderThickness="2"
                     Background="White">
-
-                    <TextBlock
-                        Text="{Binding Number}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                    <Grid>
+                        <TextBlock
+                            Text="{Binding Number}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                        <Ellipse
+                            x:Name="PART_PlayerPin"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Stretch="Uniform"
+                            RenderTransformOrigin="0.1,0.1">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform>
+                                    <TranslateTransform.X>
+                                        <MultiBinding Converter="{conv:CenterXMultiConverter}">
+                                            <Binding
+                                                Path="ActualWidth"
+                                                RelativeSource="{RelativeSource AncestorType={x:Type Grid}}" />
+                                            <Binding
+                                                Path="ActualHeight"
+                                                RelativeSource="{RelativeSource AncestorType={x:Type Grid}}" />
+                                        </MultiBinding>
+                                    </TranslateTransform.X>
+                                </TranslateTransform>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </Grid>
                 </Border>
                 <Border
                     x:Name="Part_Mine"
@@ -53,10 +80,10 @@
                         Visibility="Collapsed"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Background="#FFFFFA99">
+                        Background="#FFA8A8A8">
                         <TextBlock
+                            x:Name="PART_FlagMark"
                             Text="F"
-                            Foreground="Red"
                             FontWeight="ExtraBold"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center" />
@@ -79,6 +106,119 @@
                     Binding="{Binding IsMarked}"
                     Value="True">
                     <Setter TargetName="Part_MarkPanel" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+
+                <!--  scoring  -->
+                <DataTrigger
+                    Binding="{Binding Owner}"
+                    Value="0">
+                    <Setter TargetName="Part_Number" Property="BorderBrush">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource FirstPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Owner}"
+                    Value="1">
+                    <Setter TargetName="Part_Number" Property="BorderBrush">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource SecondPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Owner}"
+                    Value="2">
+                    <Setter TargetName="Part_Number" Property="BorderBrush">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource ThirdPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Owner}"
+                    Value="3">
+                    <Setter TargetName="Part_Number" Property="BorderBrush">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource FourthPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <DataTrigger
+                    Binding="{Binding SelectedOpener}"
+                    Value="0">
+                    <Setter TargetName="PART_PlayerPin" Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource FirstPlayerColor}, Converter={conv:ColorAlphaConverter}, ConverterParameter=88}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding SelectedOpener}"
+                    Value="1">
+                    <Setter TargetName="PART_PlayerPin" Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource SecondPlayerColor}, Converter={conv:ColorAlphaConverter}, ConverterParameter=88}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding SelectedOpener}"
+                    Value="2">
+                    <Setter TargetName="PART_PlayerPin" Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource ThirdPlayerColor}, Converter={conv:ColorAlphaConverter}, ConverterParameter=88}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding SelectedOpener}"
+                    Value="3">
+                    <Setter TargetName="PART_PlayerPin" Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource FourthPlayerColor}, Converter={conv:ColorAlphaConverter}, ConverterParameter=88}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <!--  TODO : change design  -->
+                <DataTrigger
+                    Binding="{Binding SelectedMarker}"
+                    Value="0">
+                    <Setter TargetName="PART_FlagMark" Property="Foreground">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource FirstPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding SelectedMarker}"
+                    Value="1">
+                    <Setter TargetName="PART_FlagMark" Property="Foreground">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource SecondPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding SelectedMarker}"
+                    Value="2">
+                    <Setter TargetName="PART_FlagMark" Property="Foreground">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource ThirdPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding SelectedMarker}"
+                    Value="3">
+                    <Setter TargetName="PART_FlagMark" Property="Foreground">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding Source={StaticResource FourthPlayerColor}}" />
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>

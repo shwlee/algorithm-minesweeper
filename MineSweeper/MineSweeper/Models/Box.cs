@@ -34,6 +34,18 @@ public partial class Box : ObservableObject
     [ObservableProperty]
     private int _owner = -1;
 
+    /// <summary>
+    /// open 한 player. open 한 박스에 player 를 표시하시 위한 용도.
+    /// </summary>
+    [ObservableProperty]
+    private int _selectedOpener = -1;
+
+    /// <summary>
+    /// mark 한 player. mark 한 박스에 player 를 표시하기 위한 용도.
+    /// </summary>
+    [ObservableProperty]
+    private int _selectedMarker = -1;
+
     public Box(int column, int row)
     {
         X = column;
