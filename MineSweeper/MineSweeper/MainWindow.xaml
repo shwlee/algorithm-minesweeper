@@ -56,6 +56,7 @@
                 </Border>
                 <Border
                     x:Name="Part_Mine"
+                    Margin="2"
                     BorderThickness="3"
                     BorderBrush="#FFB21016"
                     Visibility="Collapsed">
@@ -336,19 +337,94 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type models:TurnPlayer}">
-                                <Grid>
-                                    <Border
-                                        BorderThickness="1"
-                                        Margin="5">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock>
-                                                <Run Text="{Binding Name}" />
-                                                <Run Text=" : " />
-                                                <Run Text="{Binding Score}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </Border>
-                                </Grid>
+                                <Border
+                                    Margin="2"
+                                    BorderThickness="1"
+                                    BorderBrush="#FF959597">
+                                    <Grid MinWidth="100">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="0.2*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0">
+                                            <Ellipse
+                                                x:Name="PART_Player"
+                                                Margin="3"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Stretch="Uniform">
+                                                <Ellipse.RenderTransform>
+                                                    <TranslateTransform>
+                                                        <TranslateTransform.Y>
+                                                            <MultiBinding Converter="{conv:CenterXMultiConverter}">
+                                                                <Binding
+                                                                    Path="ActualHeight"
+                                                                    RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                <Binding
+                                                                    Path="ActualWidth"
+                                                                    RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                            </MultiBinding>
+                                                        </TranslateTransform.Y>
+                                                    </TranslateTransform>
+                                                </Ellipse.RenderTransform>
+                                            </Ellipse>
+                                        </Border>
+
+                                        <Border
+                                            Grid.Column="1"
+                                            BorderThickness="1"
+                                            Margin="2">
+                                            <StackPanel
+                                                Orientation="Horizontal"
+                                                VerticalAlignment="Center">
+                                                <TextBlock>
+                                                    <Run Text="{Binding Name}" />
+                                                    <Run Text=" : " />
+                                                    <Run Text="{Binding Score}" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Index}"
+                                        Value="0">
+                                        <Setter TargetName="PART_Player" Property="Fill">
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{Binding Source={StaticResource FirstPlayerColor}}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger
+                                        Binding="{Binding Index}"
+                                        Value="1">
+                                        <Setter TargetName="PART_Player" Property="Fill">
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{Binding Source={StaticResource SecondPlayerColor}}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger
+                                        Binding="{Binding Index}"
+                                        Value="2">
+                                        <Setter TargetName="PART_Player" Property="Fill">
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{Binding Source={StaticResource ThirdPlayerColor}}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger
+                                        Binding="{Binding Index}"
+                                        Value="3">
+                                        <Setter TargetName="PART_Player" Property="Fill">
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{Binding Source={StaticResource FourthPlayerColor}}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
