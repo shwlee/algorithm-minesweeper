@@ -1,6 +1,8 @@
-﻿namespace MineSweeper.Player;
+﻿using MineSweeper.Player;
 
-public class SamplePlayer : IPlayer
+namespace NXP.CSharp.MineSweeper;
+
+public class SamplePlayer
 {
     // sample!
 
@@ -11,18 +13,6 @@ public class SamplePlayer : IPlayer
     private int _row;
 
     private int _totalMineCount;
-
-    private string _name;
-
-    public SamplePlayer(string name)
-    {
-        _name = name;
-    }
-
-    public string GetName()
-    {
-        return _name;
-    }
 
     public void Initialize(int myNumber, int column, int row, int totalMineCount)
     {
@@ -47,77 +37,84 @@ public class SamplePlayer : IPlayer
 
     private PlayContext OpenTo(int[] board)
     {
-        // 전체 box 획득.
-        var composition = new MineBlock[board.Length];
-        for (int i = 0; i < board.Length; i++)
+        try
         {
-            var box = board[i];
-            var block = new MineBlock
+            // 전체 box 획득.
+            var composition = new MineBlock[board.Length];
+            for (int i = 0; i < board.Length; i++)
             {
-                Index = i,
-                State = box
-            };
-            composition[i] = block;
-        }
-
-        // 가장 작은 number 를 가진 box 순서 정렬
-        var targets = composition.Where(box => box.State > 0).OrderBy(box => box.State).ToList();
-
-        // 주변 8칸 중 열리지 않은 박스가 가장 적은 순서대로 다시 정렬.
-        var withArrounds = targets.Select(target => new
-        {
-            Index = target.Index,
-            Status = target.State,
-            Arround = GetArroundBlocks(target.Index, composition)
-        }).OrderBy(blocks => blocks.Arround.Length).ToList();
-
-        foreach (var box in withArrounds)
-        {
-            var unopened = box.Arround;
-            var mineCount = box.Status;
-            
-            // 깃발, 닫힌 박스가 현재 박스의 개수와 같으면.
-            if (unopened.Where(unopen => unopen?.State < 0).Count() == mineCount)
-            {                
-                // 그 중 빈 박스를 찾아
-                var selectedBox = unopened.FirstOrDefault(unopen => unopen?.State is -1);
-                if (selectedBox is null)
+                var box = board[i];
+                var block = new MineBlock
                 {
-                    // 이미 모든 깃발 마크이므로 다음 열거 진행.
-                    continue;                    
-                }
-
-                // 첫번째 박스 선택후 깃발 마크.
-                return new PlayContext(PlayerAction.Mark, selectedBox.Index);
+                    Index = i,
+                    State = box
+                };
+                composition[i] = block;
             }
 
-            // 깃발, 닫힌 박스가 현재 박스보다 많을 때,            
-            // 찾은 주변 박스 중 깃발 개수가 현재 개수와 같으면 open.
-            if (unopened.Where(unopen => unopen?.State is -2).Count() == mineCount)
+            // 가장 작은 number 를 가진 box 순서 정렬
+            var targets = composition.Where(box => box.State > 0).OrderBy(box => box.State).ToList();
+
+            // 주변 8칸 중 열리지 않은 박스가 가장 적은 순서대로 다시 정렬.
+            var withArrounds = targets.Select(target => new
             {
-                var selectedBox = unopened.FirstOrDefault(unopen => unopen?.State is -1);
-                if (selectedBox is null)
+                target.Index,
+                Status = target.State,
+                Arround = GetArroundBlocks(target.Index, composition)
+            }).OrderBy(blocks => blocks.Arround.Length).ToList();
+
+            foreach (var box in withArrounds)
+            {
+                var unopened = box.Arround;
+                var mineCount = box.Status;
+
+                // 깃발, 닫힌 박스가 현재 박스의 개수와 같으면.
+                if (unopened.Where(unopen => unopen?.State < 0).Count() == mineCount)
                 {
-                    continue;
+                    // 그 중 빈 박스를 찾아
+                    var selectedBox = unopened.FirstOrDefault(unopen => unopen?.State is -1);
+                    if (selectedBox is null)
+                    {
+                        // 이미 모든 깃발 마크이므로 다음 열거 진행.
+                        continue;
+                    }
+
+                    // 첫번째 박스 선택후 깃발 마크.
+                    return new PlayContext(PlayerAction.Mark, selectedBox.Index);
                 }
 
-                // 첫번째 박스 선택후 깃발 마크.
-                return new PlayContext(PlayerAction.Open, selectedBox.Index);
+                // 깃발, 닫힌 박스가 현재 박스보다 많을 때,            
+                // 찾은 주변 박스 중 깃발 개수가 현재 개수와 같으면 open.
+                if (unopened.Where(unopen => unopen?.State is -2).Count() == mineCount)
+                {
+                    var selectedBox = unopened.FirstOrDefault(unopen => unopen?.State is -1);
+                    if (selectedBox is null)
+                    {
+                        continue;
+                    }
+
+                    // 첫번째 박스 선택후 깃발 마크.
+                    return new PlayContext(PlayerAction.Open, selectedBox.Index);
+                }
             }
-        }
 
-        // 타인의 깃발이 모두 옳다고 가정
-        if (composition.Count(box => box.State is -2) == _totalMineCount)
+            // 타인의 깃발이 모두 옳다고 가정
+            if (composition.Count(box => box.State is -2) == _totalMineCount)
+            {
+                // 지뢰를 모두 찾음.
+                return new PlayContext(PlayerAction.Close, -1);
+            }
+
+            // 완전히 모르면 랜덤
+            var unknowns = composition.Where(box => box.State is -1).ToList();
+            var selectedIndex = new Random().Next(0, unknowns.Count - 1);
+            var unknonwBox = unknowns[selectedIndex];
+            return new PlayContext(PlayerAction.Open, unknonwBox.Index);
+        }
+        catch (Exception)
         {
-            // 지뢰를 모두 찾음.
-            return new PlayContext(PlayerAction.Close, -1);
+            throw;
         }
-
-        // 완전히 모르면 랜덤
-        var unknowns = composition.Where(box => box.State is -1).ToList();
-        var selectedIndex = new Random().Next(0, unknowns.Count - 1);
-        var unknonwBox = unknowns[selectedIndex];
-        return new PlayContext(PlayerAction.Open, unknonwBox.Index);
     }
 
     class MineBlock
@@ -131,21 +128,21 @@ public class SamplePlayer : IPlayer
     {
         var blocks = new MineBlock?[8];
         var column = index % _column;
-        var row = index / _row;
+        var row = index / _column;
 
         var left = column - 1;
         var top = row - 1;
         var right = column + 1;
         var bottom = row + 1;
 
-        int? leftTop = left < 0 ? null : (top < 0 ? null : index - _column - 1);
+        int? leftTop = left < 0 ? null : top < 0 ? null : index - _column - 1;
         int? midTop = top < 0 ? null : leftTop + 1;
-        int? rightTop = top < 0 ? null : (right > _column - 1 ? null : midTop + 1);
+        int? rightTop = top < 0 ? null : right > _column - 1 ? null : midTop + 1;
         int? leftMid = left < 0 ? null : index - 1;
         int? rightMid = right > _column - 1 ? null : index + 1;
-        int? leftBottom = left < 0 ? null : (bottom > _row - 1 ? null : index + _column - 1);
+        int? leftBottom = left < 0 ? null : bottom > _row - 1 ? null : index + _column - 1;
         int? midBottom = bottom > _row - 1 ? null : leftBottom + 1;
-        int? rightBottom = right > _column - 1 ? null : (bottom > _row - 1 ? null : midBottom + 1);
+        int? rightBottom = right > _column - 1 ? null : bottom > _row - 1 ? null : midBottom + 1;
 
         blocks[0] = leftTop is not null ? composition[leftTop.Value] : null;
         blocks[1] = midTop is not null ? composition[midTop.Value] : null;
@@ -207,7 +204,8 @@ public class SamplePlayer : IPlayer
         var startupArea = StartupArea(board.Length);
         var unopeneds = startupArea.Where(position => board[position] is -1).ToList();
 
-        var selectedIndex = new Random().Next(0, unopeneds.Count - 1);
+        var seed = unopeneds.Count is 0 ? board.Length : unopeneds.Count;
+        var selectedIndex = new Random().Next(0, seed - 1);
         var unopened = unopeneds[selectedIndex];
         var position = unopened;
 

@@ -6,31 +6,25 @@ public class Player : IPlayer
 {
     // sample!
 
-    private int _myNumber;
+    private SamplePlayer _sample;
 
-    private int _column;
-
-    private int _row;
-
-    private int _totalMineCount;
+    public Player()
+    {
+        _sample = new SamplePlayer();
+    }
 
     public string GetName()
     {
-        return "NXP Greg";
+        return "NXP Greg4";
     }
 
     public void Initialize(int myNumber, int column, int row, int totalMineCount)
     {
-        _myNumber = myNumber;
-        _column = column;
-        _row = row;
-        _totalMineCount = totalMineCount;
+        _sample.Initialize(myNumber, column, row, totalMineCount);        
     }
 
     public PlayContext Turn(int[] board, int turnCount)
     {
-        var action = (PlayerAction)new Random().Next(0, 2);
-        var position = new Random().Next(0, board.Length - 1);
-        return new PlayContext(action, position);
+        return _sample.Turn(board, turnCount);        
     }
 }

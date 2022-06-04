@@ -4,9 +4,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:conv="clr-namespace:MineSweeper.Converters"
     xmlns:models="clr-namespace:MineSweeper.Models"
     xmlns:u="clr-namespace:MineSweeper.Utils"
-    xmlns:conv="clr-namespace:MineSweeper.Converters"
     mc:Ignorable="d"
     Title="MainWindow"
     Height="450"
@@ -27,10 +27,13 @@
                     BorderThickness="2"
                     Background="White">
                     <Grid>
-                        <TextBlock
-                            Text="{Binding Number}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                        <Viewbox Margin="3">
+                            <TextBlock
+                                Text="{Binding Number}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Viewbox>
+
                         <Ellipse
                             x:Name="PART_PlayerPin"
                             HorizontalAlignment="Stretch"
@@ -60,12 +63,13 @@
                     BorderThickness="3"
                     BorderBrush="#FFB21016"
                     Visibility="Collapsed">
-
-                    <TextBlock
-                        Text="B"
-                        FontWeight="ExtraBold"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                    <Viewbox Margin="3">
+                        <TextBlock
+                            Text="B"
+                            FontWeight="ExtraBold"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Viewbox>
                 </Border>
                 <Button
                     x:Name="Part_CoverButton"
@@ -82,12 +86,14 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Background="#FFA8A8A8">
-                        <TextBlock
-                            x:Name="PART_FlagMark"
-                            Text="F"
-                            FontWeight="ExtraBold"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                        <Viewbox Margin="3">
+                            <TextBlock
+                                x:Name="PART_FlagMark"
+                                Text="F"
+                                FontWeight="ExtraBold"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Viewbox>
                     </Grid>
                 </Button>
             </Grid>
@@ -343,7 +349,7 @@
                                     BorderBrush="#FF959597">
                                     <Grid MinWidth="100">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="0.2*" />
+                                            <ColumnDefinition Width="15" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
@@ -375,15 +381,16 @@
                                             Grid.Column="1"
                                             BorderThickness="1"
                                             Margin="2">
-                                            <StackPanel
-                                                Orientation="Horizontal"
-                                                VerticalAlignment="Center">
-                                                <TextBlock>
-                                                    <Run Text="{Binding Name}" />
-                                                    <Run Text=" : " />
-                                                    <Run Text="{Binding Score}" />
-                                                </TextBlock>
-                                            </StackPanel>
+                                            <DockPanel
+                                                VerticalAlignment="Center"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                                <TextBlock
+                                                    MaxWidth="200"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    Text="{Binding Name}" />
+                                                <TextBlock>:</TextBlock>
+                                                <TextBlock Text="{Binding Score}" />
+                                            </DockPanel>
                                         </Border>
                                     </Grid>
                                 </Border>
