@@ -2,6 +2,7 @@
 using MineSweeper.Contracts;
 using MineSweeper.Models;
 using MineSweeper.Player;
+using MineSweeper.Utils.Players.JS;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,8 @@ public class PlayerLoader : IPlayerLoader
         _loadAssemblies.ForEach(asm => asm.Unload());
         _loadAssemblies.Clear();
 
+        var root = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location);
+
         // TODO : 최대 4 명 로딩 체크.
         var players = new List<IPlayer>(4);
         //var players = new List<IPlayer>
@@ -37,9 +40,40 @@ public class PlayerLoader : IPlayerLoader
 
         // load players
         // load c#
-        var path = Path.Combine(Strings.Players, Enum.GetName<Platform>(Platform.CS)!);
+        LoadCSharpPlayer(players, root);
+
+        // load javascript
+        LoadJavaScriptPlayer(players, root);
+
+        return players;
+    }
+
+    private void LoadJavaScriptPlayer(List<IPlayer> players, string? root)
+    {
+        if (string.IsNullOrWhiteSpace(root))
+        {
+            throw new ArgumentNullException(nameof(root));
+        }
+
+        var path = Path.Combine(Strings.Players, Enum.GetName(Platform.Javascript)!);
         var files = Directory.GetFiles(path);
-        var root = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+        foreach (var file in files)
+        {
+            var scriptPath = Path.Combine(root, file);
+            var player = new JavascriptPlayer(scriptPath);
+            players.Add(player);
+        }
+    }
+
+    private void LoadCSharpPlayer(List<IPlayer> players, string? root)
+    {
+        if (string.IsNullOrWhiteSpace(root))
+        {
+            throw new ArgumentNullException(nameof(root));
+        }
+
+        var path = Path.Combine(Strings.Players, Enum.GetName(Platform.CS)!);
+        var files = Directory.GetFiles(path);
 
         foreach (var file in files)
         {
@@ -64,7 +98,7 @@ public class PlayerLoader : IPlayerLoader
                     break;
                 }
             }
-            
+
             if (playerType is null)
             {
                 continue;
@@ -77,8 +111,6 @@ public class PlayerLoader : IPlayerLoader
 
             players.Add(player);
         }
-
-        return players;
     }
 
     private void FolderCheck()
@@ -98,6 +130,4 @@ public class PlayerLoader : IPlayerLoader
             }
         }
     }
-
-
 }

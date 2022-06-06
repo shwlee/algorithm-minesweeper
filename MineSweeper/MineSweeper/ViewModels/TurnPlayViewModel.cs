@@ -117,18 +117,15 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
     {
         try
         {
-            var board = GetCurrentBoard();            
+            var board = GetCurrentBoard();
 
             ExecuteTurn(board, false);
-
-            if (Players!.Count > 1)
+            
+            // 수동턴에 의한 lastTurnPlayer 와 TurnCount 보정.
+            if (_lastTurnPlayer >= Players!.Count - 1)
             {
-                // 수동턴에 의한 lastTurnPlayer 와 TurnCount 보정.
-                if (_lastTurnPlayer >= Players!.Count - 1)
-                {
-                    _lastTurnPlayer = 0;
-                    TurnCount++;
-                }
+                _lastTurnPlayer = 0;
+                TurnCount++;
             }
         }
         catch (Exception ex)
@@ -137,7 +134,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             // TODO : 후처리.
         }
         finally
-        {    
+        {
             if (Players!.Count > 1)
             {
                 _lastTurnPlayer++;
@@ -329,7 +326,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
         catch (Exception ex)
         {
-            
+
             // TODO : logging;
             // TODO : 예외를 발생시킨 플레이어는 탈락 처리.
             throw;

@@ -140,14 +140,20 @@ public class SamplePlayer : IPlayer
             var right = column + 1;
             var bottom = row + 1;
 
-            int? leftTop = left < 0 ? null : top < 0 ? null : index - _column - 1;
-            int? midTop = top < 0 ? null : leftTop + 1;
-            int? rightTop = top < 0 ? null : right > _column - 1 ? null : midTop + 1;
+            var upperLine = index - _column;
+
+            int? leftTop = left < 0 ? null : top < 0 ? null : upperLine - 1;
+            int? midTop = top < 0 ? null : upperLine;
+            int? rightTop = top < 0 ? null : right > _column - 1 ? null : upperLine + 1;
+
             int? leftMid = left < 0 ? null : index - 1;
             int? rightMid = right > _column - 1 ? null : index + 1;
-            int? leftBottom = left < 0 ? null : bottom > _row - 1 ? null : index + _column - 1;
-            int? midBottom = bottom > _row - 1 ? null : leftBottom + 1;
-            int? rightBottom = right > _column - 1 ? null : bottom > _row - 1 ? null : midBottom + 1;
+            
+            var lowerLine = index + _column;
+
+            int? leftBottom = left < 0 ? null : bottom > _row - 1 ? null : lowerLine - 1;
+            int? midBottom = bottom > _row - 1 ? null : lowerLine;
+            int? rightBottom = right > _column - 1 ? null : bottom > _row - 1 ? null : lowerLine + 1;
 
             blocks[0] = leftTop is not null ? composition[leftTop.Value] : null;
             blocks[1] = midTop is not null ? composition[midTop.Value] : null;

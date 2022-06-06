@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32427.441
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineSweeper", "MineSweeper\MineSweeper.csproj", "{56DF0345-8F83-4A86-8308-5AA8937F7305}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MineSweeper.Player", "MineSweeper.Player\MineSweeper.Player.csproj", "{26725C60-9200-4427-AF28-D19779A73DDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineSweeper.Player", "MineSweeper.Player\MineSweeper.Player.csproj", "{26725C60-9200-4427-AF28-D19779A73DDC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Game", "01. Game", "{30FA704C-8467-438C-A3C9-F9F20B31E3D6}"
 EndProject
@@ -15,32 +15,55 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{1C403C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Javascript", "Javascript", "{FA611322-6DA7-4A61-9410-15F8A4A1A2A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NXP-CSharp-MineSweeper", "NXP-Mimesweeper\NXP-CSharp-MineSweeper.csproj", "{412C791E-EBBD-4D63-A617-48364272DBDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NXP-CSharp-MineSweeper", "NXP-Mimesweeper\NXP-CSharp-MineSweeper.csproj", "{412C791E-EBBD-4D63-A617-48364272DBDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NXP-JS-MineSweeper", "NXP-JS-MineSweeper\NXP-JS-MineSweeper.csproj", "{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NXP-JS-MineSweeper", "NXP-JS-MineSweeper\NXP-JS-MineSweeper.csproj", "{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B6373B7C-DFC5-46F5-B5EF-6C12E507D43F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Debug|x64.ActiveCfg = Debug|x64
+		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Debug|x64.Build.0 = Debug|x64
 		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Release|x64.ActiveCfg = Release|x64
+		{56DF0345-8F83-4A86-8308-5AA8937F7305}.Release|x64.Build.0 = Release|x64
 		{26725C60-9200-4427-AF28-D19779A73DDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26725C60-9200-4427-AF28-D19779A73DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26725C60-9200-4427-AF28-D19779A73DDC}.Debug|x64.ActiveCfg = Debug|x64
+		{26725C60-9200-4427-AF28-D19779A73DDC}.Debug|x64.Build.0 = Debug|x64
 		{26725C60-9200-4427-AF28-D19779A73DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26725C60-9200-4427-AF28-D19779A73DDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26725C60-9200-4427-AF28-D19779A73DDC}.Release|x64.ActiveCfg = Release|x64
+		{26725C60-9200-4427-AF28-D19779A73DDC}.Release|x64.Build.0 = Release|x64
 		{412C791E-EBBD-4D63-A617-48364272DBDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{412C791E-EBBD-4D63-A617-48364272DBDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{412C791E-EBBD-4D63-A617-48364272DBDE}.Debug|x64.ActiveCfg = Debug|x64
+		{412C791E-EBBD-4D63-A617-48364272DBDE}.Debug|x64.Build.0 = Debug|x64
 		{412C791E-EBBD-4D63-A617-48364272DBDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{412C791E-EBBD-4D63-A617-48364272DBDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{412C791E-EBBD-4D63-A617-48364272DBDE}.Release|x64.ActiveCfg = Release|x64
+		{412C791E-EBBD-4D63-A617-48364272DBDE}.Release|x64.Build.0 = Release|x64
 		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Debug|x64.ActiveCfg = Debug|x64
+		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Debug|x64.Build.0 = Debug|x64
 		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Release|x64.ActiveCfg = Release|x64
+		{C8EBE2FE-7BAF-438A-8D5C-EE7372A66361}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
