@@ -33,13 +33,10 @@ public class PlayerLoader : IPlayerLoader
 
         // TODO : 최대 4 명 로딩 체크.
         var players = new List<IPlayer>(4);
-        //var players = new List<IPlayer>
-        //{
-        //    new SamplePlayer(),
-        //    new SamplePlayer(),
-        //    new SamplePlayer(),
-        //    new SamplePlayer(),
-        //};
+        //players.Add(new SamplePlayer());
+        //players.Add(new SamplePlayer());
+        //players.Add(new SamplePlayer());
+        //players.Add(new SamplePlayer());
 
         //return players;
 
@@ -66,7 +63,7 @@ public class PlayerLoader : IPlayerLoader
         }
 
         var path = Path.Combine(Strings.Players, Enum.GetName(Platform.Javascript)!);
-        var files = Directory.GetFiles(path);
+        var files = Directory.GetFiles(path, "*.js");
         foreach (var file in files)
         {
             if (players.Count >= 4)

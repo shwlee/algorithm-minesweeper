@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace MineSweeper.Extensions;
 
@@ -12,5 +13,22 @@ public static class TaskExtension
         }
 
         return task;
+    }
+
+    public static async Task<T> Timeout<T>(this Task<T> task, TimeSpan timeLimit)
+    {
+        var winner = await Task.WhenAny(task, DelayedDummyResultTask<T>(timeLimit));
+        if (winner == task)
+        {
+            return await task;
+        }
+
+        throw new TimeoutException();
+    }
+
+    private static async Task<T> DelayedDummyResultTask<T>(TimeSpan delay)
+    {
+        await Task.Delay(delay);
+        return default(T);
     }
 }

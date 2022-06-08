@@ -27,6 +27,11 @@ public class SamplePlayer
         if (turnCount is 1)
         {
             var (firstAction, firstPosition) = FirstAct(board);
+            if (firstPosition is -1) // 이미 첫턴에서 금지구역이 다 열렸으므로 firstAct 에서 선택할 것이 없다.
+            {
+                return OpenTo(board);
+            }
+
             return new PlayContext(firstAction, firstPosition);
         }
 
@@ -145,7 +150,7 @@ public class SamplePlayer
 
             int? leftMid = left < 0 ? null : index - 1;
             int? rightMid = right > _column - 1 ? null : index + 1;
-            
+
             var lowerLine = index + _column;
 
             int? leftBottom = left < 0 ? null : bottom > _row - 1 ? null : lowerLine - 1;
@@ -217,8 +222,13 @@ public class SamplePlayer
     {
         var startupArea = StartupArea(board.Length);
         var unopeneds = startupArea.Where(position => board[position] is -1).ToList();
+        
+        if (unopeneds.Count is 0)
+        {
+            return (PlayerAction.Open, -1);
+        }
 
-        var seed = unopeneds.Count is 0 ? board.Length : unopeneds.Count;
+        var seed = unopeneds.Count;
         var selectedIndex = new Random().Next(0, seed - 1);
         var unopened = unopeneds[selectedIndex];
         var position = unopened;

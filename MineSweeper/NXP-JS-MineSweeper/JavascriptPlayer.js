@@ -45,6 +45,10 @@ function Turn(board, turnCount) {
             firstPosition
         } = firstAct(board);
 
+        if (firstPosition === -1) {
+            return openTo(board);
+        }
+
         let context = new PlayerContext(firstAction, firstPosition);
         return context;
     }
@@ -56,7 +60,15 @@ function firstAct(board) {
     const startup = startupArea(board.length);
     const unopeneds = startup.filter((position) => board[position] < 0);
 
-    const seed = unopeneds.length === 0 ? board.length : unopeneds.length;
+    if (unopeneds.length === 0) {
+
+        return {
+            firstAction: playerAction.Open,
+            firstPosition : -1
+        };
+    }
+
+    const seed = unopeneds.length;
     const random = Math.random() * seed;
     const selectedIndex = Math.floor(random);
 

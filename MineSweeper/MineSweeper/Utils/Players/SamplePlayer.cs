@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace MineSweeper.Utils.Players;
 
@@ -30,6 +31,11 @@ public class SamplePlayer : IPlayer
         if (turnCount is 1)
         {
             var (firstAction, firstPosition) = FirstAct(board);
+            if (firstPosition is -1) // 이미 첫턴에서 금지구역이 다 열렸으므로 firstAct 에서 선택할 것이 없다.
+            {
+                return OpenTo(board);
+            }
+
             return new PlayContext(firstAction, firstPosition);
         }
 
@@ -218,10 +224,17 @@ public class SamplePlayer : IPlayer
     // TODO : test 후 삭제.
     private (PlayerAction firstAction, int firstPosition) FirstAct(int[] board)
     {
+        Thread.Sleep(3500);
+
         var startupArea = StartupArea(board.Length);
         var unopeneds = startupArea.Where(position => board[position] is -1).ToList();
 
-        var seed = unopeneds.Count is 0 ? board.Length : unopeneds.Count;
+        if (unopeneds.Count is 0)
+        {
+            return (PlayerAction.Open, -1);
+        }
+
+        var seed = unopeneds.Count;
         var selectedIndex = new Random().Next(0, seed - 1);
         var unopened = unopeneds[selectedIndex];
         var position = unopened;

@@ -89,6 +89,79 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         return _board?.ToArray();
     }
 
+    public (int column, int row) GetColumRows()
+    {
+        if (_isInitialized is false)
+        {
+            throw new GameNotInitializedExceptionException();
+        }
+
+        return (_columns, _rows);
+    }
+
+    public void Set(PlayContext context, int playerIndex)
+    {
+        var position = context.Position;
+        var box = _boxList[position];
+        if (box is null)
+        {
+            var reason = context.Action switch
+            {
+                PlayerAction.Open => ViolationReason.TryOpenOutOfRange,
+                PlayerAction.Mark => ViolationReason.TryMarkOutOfRange,
+                _ => throw new TurnContinueException()
+            };
+
+            throw new MineSweepViolationException(playerIndex, reason);
+        }
+
+        var action = context.Action;
+        switch (action)
+        {
+            case PlayerAction.Open:
+                OpenBox(box, playerIndex);
+                break;
+            case PlayerAction.Mark:
+                MarkBox(box, playerIndex);
+                break;
+            case PlayerAction.Close:
+                break;
+        }
+    }
+
+    public bool IsGameOver()
+    {
+        // mine 이 하나도 없으면 mine 설정이 잘못 되었다.
+        if (_boxList.Any(box => box.IsMine) is false)
+        {
+            throw new GameNotInitializedExceptionException();
+        }
+
+        // mine 을 열었는지만 확인.
+        if (_boxList.Any(box => box.IsMine && box.IsOpened))
+        {
+            return true;
+        }
+
+        if (_boxList.Where(box => box.IsMine).All(box => box.IsMarked))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int GetNumberOfTotalMines()
+    {
+        return _mineCount;
+    }
+
+    public int GetScore(int playerIndex)
+    {
+        var score = _boxList.Where(box => box.Owner == playerIndex && box.IsMarked is false).Sum(box => box.Number);
+        return score;
+    }
+
     [ICommand]
     private void ApplyLayout()
     {
@@ -404,78 +477,5 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
             throw new GameOverException(player);
         }
-    }
-
-    public (int column, int row) GetColumRows()
-    {
-        if (_isInitialized is false)
-        {
-            throw new GameNotInitializedExceptionException();
-        }
-
-        return (_columns, _rows);
-    }
-
-    public void Set(PlayContext context, int playerIndex)
-    {
-        var position = context.Position;
-        var box = _boxList[position];
-        if (box is null)
-        {
-            var reason = context.Action switch
-            {
-                PlayerAction.Open => ViolationReason.TryOpenOutOfRange,
-                PlayerAction.Mark=> ViolationReason.TryMarkOutOfRange,
-                _ => throw new TurnContinueException()
-            };            
-
-            throw new MineSweepViolationException(playerIndex, reason);
-        }
-
-        var action = context.Action;
-        switch (action)
-        {
-            case PlayerAction.Open:
-                OpenBox(box, playerIndex);
-                break;
-            case PlayerAction.Mark:
-                MarkBox(box, playerIndex);
-                break;
-            case PlayerAction.Close:
-                break;
-        }
-    }
-
-    public bool IsGameOver()
-    {
-        // mine 이 하나도 없으면 mine 설정이 잘못 되었다.
-        if (_boxList.Any(box => box.IsMine) is false)
-        {
-            throw new GameNotInitializedExceptionException();
-        }
-
-        // mine 을 열었는지만 확인.
-        if (_boxList.Any(box => box.IsMine && box.IsOpened))
-        {
-            return true;
-        }
-
-        if (_boxList.Where(box => box.IsMine).All(box => box.IsMarked))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public int GetNumberOfTotalMines()
-    {
-        return _mineCount;
-    }
-
-    public int GetScore(int playerIndex)
-    {
-        var score = _boxList.Where(box => box.Owner == playerIndex && box.IsMarked is false).Sum(box => box.Number);
-        return score;
     }
 }
