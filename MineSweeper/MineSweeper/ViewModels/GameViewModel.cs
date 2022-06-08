@@ -202,7 +202,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
             UpdateBoardData();
 
-            Verify();
+            Verify(player);
         }
         catch (GameOverException gameOver)
         {
@@ -396,9 +396,14 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         _startingArea.AddRange(aroundRightBottom);
     }
 
-    private void Verify()
+    private void Verify(int? player)
     {
-        // TODO : 게임 정상 상태 판단
+        if (IsGameOver())
+        {
+            // TODO : log
+
+            throw new GameOverException(player);
+        }
     }
 
     public (int column, int row) GetColumRows()
@@ -443,13 +448,19 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
     public bool IsGameOver()
     {
+        // mine 이 하나도 없으면 mine 설정이 잘못 되었다.
+        if (_boxList.Any(box => box.IsMine) is false)
+        {
+            throw new GameNotInitializedExceptionException();
+        }
+
         // mine 을 열었는지만 확인.
         if (_boxList.Any(box => box.IsMine && box.IsOpened))
         {
             return true;
         }
 
-        if (_boxList.All(box => box.IsMine && box.IsMarked))
+        if (_boxList.Where(box => box.IsMine).All(box => box.IsMarked))
         {
             return true;
         }

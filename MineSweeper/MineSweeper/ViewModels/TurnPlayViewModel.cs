@@ -30,7 +30,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
     private int _turnCount = 1;
 
-    private CancellationTokenSource _autoPlayCancelTokenSource = new CancellationTokenSource();
+    private CancellationTokenSource? _autoPlayCancelTokenSource = new CancellationTokenSource();
 
     private Task? _autoPlay;
 
@@ -72,10 +72,10 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
     protected override void OnActivated()
     {
-        Messenger.Register<TurnPlayViewModel, GameMessage>(this, (r, m) => r.GameMessage(m));
+        Messenger.Register<TurnPlayViewModel, GameMessage>(this, async (r, m) => r.GameMessage(m));
     }
 
-    private void GameMessage(GameMessage message)
+    private async void GameMessage(GameMessage message)
     {
         // game 정리. (player score 등)
         var state = message.State;
@@ -93,7 +93,24 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             case GameStateMessage.Start:
                 break;
             case GameStateMessage.GameOver:
+                await StopAutoPlay();
+
+                // TODO : 후처리.
                 break;
+        }
+    }
+
+    private void CancelAutoPlayer()
+    {
+        try
+        {
+            _autoPlayCancelTokenSource?.Cancel();
+            _autoPlayCancelTokenSource?.Dispose();
+            _autoPlayCancelTokenSource = new CancellationTokenSource();
+        }
+        catch (Exception ex)
+        {
+
         }
     }
 
@@ -147,9 +164,16 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
     }
 
     [ICommand]
-    private void TurnAll()
+    private async void TurnAll()
     {
-        _ = ExecuteTurnAll();
+        try
+        {
+            await ExecuteTurnAll();
+        }
+        catch (Exception ex)
+        {
+            CanControlPlay = true;
+        }
     }
 
     private async Task ExecuteTurnAll([Optional] AutoPlay? playSpeed, [Optional, DefaultParameterValue(true)] bool useControl)
@@ -217,7 +241,9 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         catch (Exception ex)
         {
             AutoSpeed = AutoPlay.Stop;
+            await StopAutoPlay();
 
+            throw;
             // TODO : logger
             // TODO : 후처리.
         }
@@ -261,8 +287,10 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         try
         {
             CanControlPlay = false;
+            AutoSpeed = AutoPlay.Stop;
 
-            _autoPlayCancelTokenSource.Cancel();
+            CancelAutoPlayer();
+
             await _autoPlay.EnsureTask();
         }
         catch (Exception ex)
@@ -271,31 +299,46 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
 
         CanControlPlay = true;
-
-        _autoPlayCancelTokenSource.Dispose();
-        _autoPlayCancelTokenSource = new CancellationTokenSource();
     }
 
     private void StartAutoPlay()
     {
+        if (_autoPlayCancelTokenSource is null)
+        {
+            throw new InvalidOperationException("The CancellationTokenSource is null");
+        }
+
         var cancelToken = _autoPlayCancelTokenSource.Token;
         _autoPlay = Task.Run(async () =>
         {
             while (true)
             {
-                if (IsGameOver())
+                try
                 {
-                    break;
+                    if (IsGameOver())
+                    {
+                        break;
+                    }
+
+                    await ExecuteTurnAll(AutoSpeed, false);
+
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    await Task.Delay(500, cancelToken); // 모든 플레이어가 턴을 돌고 0.5초를 더 쉰다.
                 }
-
-                await ExecuteTurnAll(AutoSpeed, false);
-
-                if (cancelToken.IsCancellationRequested)
+                catch (Exception ex)
                 {
-                    break;
-                }
+                    // TODO : log
 
-                await Task.Delay(500, cancelToken); // 모든 플레이어가 턴을 돌고 0.5초를 더 쉰다.
+                    CancelAutoPlayer();
+
+                    AutoSpeed = AutoPlay.Stop;
+                    CanControlPlay = true;
+                    return;
+                }
             }
         }, cancelToken);
     }

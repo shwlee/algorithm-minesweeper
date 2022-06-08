@@ -111,7 +111,7 @@ public class SamplePlayer
             var unknonwBox = unknowns[selectedIndex];
             return new PlayContext(PlayerAction.Open, unknonwBox.Index);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             throw;
         }
@@ -126,34 +126,48 @@ public class SamplePlayer
 
     private MineBlock?[] GetArroundBlocks(int index, MineBlock[] composition)
     {
-        var blocks = new MineBlock?[8];
-        var column = index % _column;
-        var row = index / _column;
+        try
+        {
+            var blocks = new MineBlock?[8];
+            var column = index % _column;
+            var row = index / _column;
 
-        var left = column - 1;
-        var top = row - 1;
-        var right = column + 1;
-        var bottom = row + 1;
+            var left = column - 1;
+            var top = row - 1;
+            var right = column + 1;
+            var bottom = row + 1;
 
-        int? leftTop = left < 0 ? null : top < 0 ? null : index - _column - 1;
-        int? midTop = top < 0 ? null : leftTop + 1;
-        int? rightTop = top < 0 ? null : right > _column - 1 ? null : midTop + 1;
-        int? leftMid = left < 0 ? null : index - 1;
-        int? rightMid = right > _column - 1 ? null : index + 1;
-        int? leftBottom = left < 0 ? null : bottom > _row - 1 ? null : index + _column - 1;
-        int? midBottom = bottom > _row - 1 ? null : leftBottom + 1;
-        int? rightBottom = right > _column - 1 ? null : bottom > _row - 1 ? null : midBottom + 1;
+            var upperLine = index - _column;
 
-        blocks[0] = leftTop is not null ? composition[leftTop.Value] : null;
-        blocks[1] = midTop is not null ? composition[midTop.Value] : null;
-        blocks[2] = rightTop is not null ? composition[rightTop.Value] : null;
-        blocks[3] = leftMid is not null ? composition[leftMid.Value] : null;
-        blocks[4] = rightMid is not null ? composition[rightMid.Value] : null;
-        blocks[5] = leftBottom is not null ? composition[leftBottom.Value] : null;
-        blocks[6] = midBottom is not null ? composition[midBottom.Value] : null;
-        blocks[7] = rightBottom is not null ? composition[rightBottom.Value] : null;
+            int? leftTop = left < 0 ? null : top < 0 ? null : upperLine - 1;
+            int? midTop = top < 0 ? null : upperLine;
+            int? rightTop = top < 0 ? null : right > _column - 1 ? null : upperLine + 1;
 
-        return blocks;
+            int? leftMid = left < 0 ? null : index - 1;
+            int? rightMid = right > _column - 1 ? null : index + 1;
+            
+            var lowerLine = index + _column;
+
+            int? leftBottom = left < 0 ? null : bottom > _row - 1 ? null : lowerLine - 1;
+            int? midBottom = bottom > _row - 1 ? null : lowerLine;
+            int? rightBottom = right > _column - 1 ? null : bottom > _row - 1 ? null : lowerLine + 1;
+
+            blocks[0] = leftTop is not null ? composition[leftTop.Value] : null;
+            blocks[1] = midTop is not null ? composition[midTop.Value] : null;
+            blocks[2] = rightTop is not null ? composition[rightTop.Value] : null;
+            blocks[3] = leftMid is not null ? composition[leftMid.Value] : null;
+            blocks[4] = rightMid is not null ? composition[rightMid.Value] : null;
+            blocks[5] = leftBottom is not null ? composition[leftBottom.Value] : null;
+            blocks[6] = midBottom is not null ? composition[midBottom.Value] : null;
+            blocks[7] = rightBottom is not null ? composition[rightBottom.Value] : null;
+
+            return blocks;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
     }
 
     // TODO : test 후 삭제.

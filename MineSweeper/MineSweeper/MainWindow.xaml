@@ -9,8 +9,8 @@
     xmlns:u="clr-namespace:MineSweeper.Utils"
     mc:Ignorable="d"
     Title="MainWindow"
-    Height="450"
-    Width="800">
+    Height="720"
+    Width="1280">
     <Window.Resources>
         <Color x:Key="FirstPlayerColor">#FFF51919</Color>
         <Color x:Key="SecondPlayerColor">#FF0055FF</Color>
@@ -52,6 +52,16 @@
                                                 RelativeSource="{RelativeSource AncestorType={x:Type Grid}}" />
                                         </MultiBinding>
                                     </TranslateTransform.X>
+                                    <TranslateTransform.Y>
+                                        <MultiBinding Converter="{conv:CenterXMultiConverter}">
+                                            <Binding
+                                                Path="ActualHeight"
+                                                RelativeSource="{RelativeSource AncestorType={x:Type Grid}}" />
+                                            <Binding
+                                                Path="ActualWidth"
+                                                RelativeSource="{RelativeSource AncestorType={x:Type Grid}}" />
+                                        </MultiBinding>
+                                    </TranslateTransform.Y>
                                 </TranslateTransform>
                             </Ellipse.RenderTransform>
                         </Ellipse>
@@ -239,268 +249,343 @@
             Command="{Binding CloseConsoleCommand}" />
     </Window.InputBindings>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition />
-            <RowDefinition Height="30" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3.5*" />
+        </Grid.ColumnDefinitions>
 
-        <Grid
-            Grid.Row="0"
-            HorizontalAlignment="Center">
-            <StackPanel Orientation="Horizontal">
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <CheckBox
-                        Content="Show All "
-                        IsChecked="{Binding Game.IsShowAll}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <CheckBox
-                        Content="Use Players"
-                        IsChecked="{Binding Game.UsePlayers}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Column : "
-                        VerticalAlignment="Center" />
-                    <TextBox
-                        Width="100"
-                        Text="{Binding Game.Columns}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <TextBlock
-                        Text="Row : "
-                        VerticalAlignment="Center" />
-                    <TextBox
-                        Width="100"
-                        Text="{Binding Game.Rows}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <TextBlock
-                        Text="Mine count : "
-                        VerticalAlignment="Center" />
-                    <TextBox
-                        Width="100"
-                        Text="{Binding Game.MineCount}"
-                        VerticalAlignment="Center" />
-                </StackPanel>
+        <!--  Control Panel  -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="1.7*" />
+            </Grid.RowDefinitions>
+            <GroupBox Header="Control">
+                <DockPanel
+                    Grid.Row="0"
+                    HorizontalAlignment="Stretch">
+                    <StackPanel
+                        DockPanel.Dock="Top"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Margin="5,2">
 
-                <Button
-                    Width="70"
-                    Margin="3"
-                    Content="SET"
-                    Command="{Binding Game.ApplyLayoutCommand}"
-                    VerticalContentAlignment="Center"
-                    VerticalAlignment="Center" />
-            </StackPanel>
+                        <CheckBox
+                            Content="Show All "
+                            IsChecked="{Binding Game.IsShowAll}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel
+                        DockPanel.Dock="Top"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Margin="5,2">
+                        <CheckBox
+                            Content="Use Players"
+                            IsChecked="{Binding Game.UsePlayers}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid
+                        DockPanel.Dock="Top"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        Margin="5,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="Column"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Margin="2" />
+                        <TextBox
+                            Grid.Column="1"
+                            Text="{Binding Game.Columns}"
+                            VerticalAlignment="Center" />
+                    </Grid>
+                    <Grid
+                        DockPanel.Dock="Top"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        Margin="5,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="Row"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Margin="2" />
+                        <TextBox
+                            Grid.Column="1"
+                            Text="{Binding Game.Rows}"
+                            VerticalAlignment="Center" />
+                    </Grid>
+                    <Grid
+                        DockPanel.Dock="Top"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        Margin="5,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="Mines"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Margin="2" />
+                        <TextBox
+                            Grid.Column="1"
+                            Text="{Binding Game.MineCount}"
+                            VerticalAlignment="Center" />
+                    </Grid>
+
+                    <Button
+                        DockPanel.Dock="Top"
+                        Margin="5,0"
+                        Content="SET"
+                        Command="{Binding Game.ApplyLayoutCommand}"
+                        VerticalAlignment="Center" />
+                </DockPanel>
+            </GroupBox>
+
+            <GroupBox
+                Header="Player"
+                Grid.Row="1">
+                <Grid IsEnabled="{Binding Turn.CanControlPlay}">
+                    <Grid.RowDefinitions>
+                        <!--  Player loader  -->
+                        <RowDefinition Height="30" />
+
+                        <!--  Players  -->
+                        <RowDefinition Height="*" />
+
+                        <!--  footer  -->
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+
+                    <Grid
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--  플레이어 수동 로딩  -->
+                        <Button
+                            Grid.Column="0"
+                            Content="Load All"
+                            Command="{Binding Turn.LoadPlayersCommand}"
+                            Margin="2" />
+                        <Button
+                            Grid.Column="1"
+                            Content="Load 1"
+                            Command="{Binding Turn.LoadPlayersCommand}"
+                            Margin="2" />
+                    </Grid>
+
+                    <WrapPanel Grid.Row="1">
+                        <ItemsControl
+                            ItemsSource="{Binding Turn.Players}"
+                            Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type WrapPanel}}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:TurnPlayer}">
+                                    <Border
+                                        Margin="2"
+                                        BorderThickness="1"
+                                        BorderBrush="#FF959597">
+                                        <Grid
+                                            MinWidth="100"
+                                            Margin="5">
+                                            <Grid HorizontalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+
+                                                <Grid
+                                                    Grid.Row="0"
+                                                    HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="15" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!--  icon & name  -->
+                                                    <Border Grid.Column="0">
+                                                        <Ellipse
+                                                            x:Name="PART_Player"
+                                                            Margin="3"
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Stretch"
+                                                            Stretch="Uniform">
+                                                            <Ellipse.RenderTransform>
+                                                                <TranslateTransform>
+                                                                    <TranslateTransform.Y>
+                                                                        <MultiBinding Converter="{conv:CenterXMultiConverter}">
+                                                                            <Binding
+                                                                                Path="ActualHeight"
+                                                                                RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                            <Binding
+                                                                                Path="ActualWidth"
+                                                                                RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                        </MultiBinding>
+                                                                    </TranslateTransform.Y>
+                                                                </TranslateTransform>
+                                                            </Ellipse.RenderTransform>
+                                                        </Ellipse>
+                                                    </Border>
+
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        Text="{Binding Name}" />
+                                                </Grid>
+
+                                                <!--  score  -->
+                                                <Border
+                                                    Grid.Row="1"
+                                                    Margin="2"
+                                                    HorizontalAlignment="Center">
+                                                    <TextBlock Text="{Binding Score}" />
+                                                </Border>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Index}"
+                                            Value="0">
+                                            <Setter TargetName="PART_Player" Property="Fill">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{Binding Source={StaticResource FirstPlayerColor}}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger
+                                            Binding="{Binding Index}"
+                                            Value="1">
+                                            <Setter TargetName="PART_Player" Property="Fill">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{Binding Source={StaticResource SecondPlayerColor}}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger
+                                            Binding="{Binding Index}"
+                                            Value="2">
+                                            <Setter TargetName="PART_Player" Property="Fill">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{Binding Source={StaticResource ThirdPlayerColor}}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger
+                                            Binding="{Binding Index}"
+                                            Value="3">
+                                            <Setter TargetName="PART_Player" Property="Fill">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{Binding Source={StaticResource FourthPlayerColor}}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </WrapPanel>
+
+                    <GroupBox
+                        Header="Turn"
+                        Grid.Row="2">
+                        <DockPanel>
+                            <TextBlock
+                                DockPanel.Dock="Left"
+                                Text="now:"
+                                VerticalAlignment="Center" />
+                            <TextBox
+                                DockPanel.Dock="Left"
+                                Width="25"
+                                IsReadOnly="True"
+                                Text="{Binding Turn.TurnCount}"
+                                VerticalAlignment="Center"
+                                Margin="3">
+                                <TextBox.Style>
+                                    <Style
+                                        TargetType="{x:Type TextBox}"
+                                        BasedOn="{StaticResource {x:Type TextBox}}">
+                                        <Style.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding Turn.TurnChanging}"
+                                                Value="True">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard Storyboard.TargetProperty="(TextBox.BorderBrush).(SolidColorBrush.Color)">
+                                                            <ColorAnimation
+                                                                To="Red"
+                                                                Duration="0:0:0.1"
+                                                                AutoReverse="True"
+                                                                RepeatBehavior="5x" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <Button
+                                DockPanel.Dock="Left"
+                                Content="one"
+                                Command="{Binding Turn.TurnOneCommand}"
+                                Margin="2,4" />
+                            <Button
+                                DockPanel.Dock="Left"
+                                Content="all"
+                                Command="{Binding Turn.TurnAllCommand}"
+                                Margin="2,4" />
+                            <Button
+                                DockPanel.Dock="Left"
+                                Width="20"
+                                Content="{Binding Turn.AutoSpeed}"
+                                Command="{Binding Turn.AutoTurnCommand}"
+                                Margin="2,4" />
+                        </DockPanel>
+                    </GroupBox>
+                </Grid>
+            </GroupBox>
         </Grid>
 
-        <ItemsControl
-            Grid.Row="1"
-            ItemsSource="{Binding Game.Boxes}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid
-                        Grid.Row="1"
-                        Background="#FFBFBFBF"
-                        Columns="{Binding Game.UniformColumns}"
-                        Rows="{Binding Game.UniformRows}" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-
-        <Grid
-            Grid.Row="2"
-            IsEnabled="{Binding Turn.CanControlPlay}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="200" />
-            </Grid.ColumnDefinitions>
-            <StackPanel
-                Orientation="Horizontal"
-                Grid.Column="0">
-                <StackPanel
-                    VerticalAlignment="Center"
-                    Margin="10,0">
-                    <Button
-                        Width="70"
-                        Content="Load"
-                        Command="{Binding Turn.LoadPlayersCommand}" />
-
-                </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <ItemsControl ItemsSource="{Binding Turn.Players}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:TurnPlayer}">
-                                <Border
-                                    Margin="2"
-                                    BorderThickness="1"
-                                    BorderBrush="#FF959597">
-                                    <Grid MinWidth="100">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="15" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Border Grid.Column="0">
-                                            <Ellipse
-                                                x:Name="PART_Player"
-                                                Margin="3"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                Stretch="Uniform">
-                                                <Ellipse.RenderTransform>
-                                                    <TranslateTransform>
-                                                        <TranslateTransform.Y>
-                                                            <MultiBinding Converter="{conv:CenterXMultiConverter}">
-                                                                <Binding
-                                                                    Path="ActualHeight"
-                                                                    RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                <Binding
-                                                                    Path="ActualWidth"
-                                                                    RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                            </MultiBinding>
-                                                        </TranslateTransform.Y>
-                                                    </TranslateTransform>
-                                                </Ellipse.RenderTransform>
-                                            </Ellipse>
-                                        </Border>
-
-                                        <Border
-                                            Grid.Column="1"
-                                            BorderThickness="1"
-                                            Margin="2">
-                                            <DockPanel
-                                                VerticalAlignment="Center"
-                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                                <TextBlock
-                                                    MaxWidth="200"
-                                                    TextTrimming="CharacterEllipsis"
-                                                    Text="{Binding Name}" />
-                                                <TextBlock>:</TextBlock>
-                                                <TextBlock Text="{Binding Score}" />
-                                            </DockPanel>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                                <DataTemplate.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding Index}"
-                                        Value="0">
-                                        <Setter TargetName="PART_Player" Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="{Binding Source={StaticResource FirstPlayerColor}}" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding Index}"
-                                        Value="1">
-                                        <Setter TargetName="PART_Player" Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="{Binding Source={StaticResource SecondPlayerColor}}" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding Index}"
-                                        Value="2">
-                                        <Setter TargetName="PART_Player" Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="{Binding Source={StaticResource ThirdPlayerColor}}" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding Index}"
-                                        Value="3">
-                                        <Setter TargetName="PART_Player" Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="{Binding Source={StaticResource FourthPlayerColor}}" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-                <StackPanel
-                    Orientation="Horizontal"
-                    Margin="10,0">
-                    <TextBlock
-                        Text="Turn : "
-                        VerticalAlignment="Center" />
-                    <TextBox
-                        Width="100"
-                        Text="{Binding Turn.TurnCount}"
-                        VerticalAlignment="Center">
-                        <TextBox.Style>
-                            <Style
-                                TargetType="{x:Type TextBox}"
-                                BasedOn="{StaticResource {x:Type TextBox}}">
-                                <Style.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding Turn.TurnChanging}"
-                                        Value="True">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard Storyboard.TargetProperty="(TextBox.BorderBrush).(SolidColorBrush.Color)">
-                                                    <ColorAnimation
-                                                        To="Red"
-                                                        Duration="0:0:0.1"
-                                                        AutoReverse="True"
-                                                        RepeatBehavior="5x" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                </StackPanel>
-            </StackPanel>
-
-            <StackPanel
-                Grid.Column="1"
-                Orientation="Horizontal"
-                HorizontalAlignment="Right">
-                <Button
-                    Width="60"
-                    Margin="5"
-                    Content="Next1"
-                    Command="{Binding Turn.TurnOneCommand}" />
-                <Button
-                    Width="60"
-                    Margin="5"
-                    Content="Next all"
-                    Command="{Binding Turn.TurnAllCommand}" />
-                <Button
-                    Width="40"
-                    Margin="5"
-                    Content="{Binding Turn.AutoSpeed}"
-                    Command="{Binding Turn.AutoTurnCommand}" />
-            </StackPanel>
+        <!--  Game Panel  -->
+        <Grid Grid.Column="1">
+            <ItemsControl
+                Grid.Row="1"
+                ItemsSource="{Binding Game.Boxes}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid
+                            Grid.Row="1"
+                            Background="#FFBFBFBF"
+                            Columns="{Binding Game.UniformColumns}"
+                            Rows="{Binding Game.UniformRows}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </Grid>
     </Grid>
 </Window>

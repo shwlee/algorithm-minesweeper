@@ -15,7 +15,7 @@ public class Player : IPlayer
 
     public string GetName()
     {
-        return "NXP Greg4";
+        return "NXP Back-end Greg4";
     }
 
     public void Initialize(int myNumber, int column, int row, int totalMineCount)

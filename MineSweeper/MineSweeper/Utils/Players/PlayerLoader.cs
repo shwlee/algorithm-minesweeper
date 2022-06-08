@@ -55,6 +55,11 @@ public class PlayerLoader : IPlayerLoader
 
     private void LoadJavaScriptPlayer(List<IPlayer> players, string? root)
     {
+        if (players.Count >= 4)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(root))
         {
             throw new ArgumentNullException(nameof(root));
@@ -64,6 +69,11 @@ public class PlayerLoader : IPlayerLoader
         var files = Directory.GetFiles(path);
         foreach (var file in files)
         {
+            if (players.Count >= 4)
+            {
+                return;
+            }
+
             var scriptPath = Path.Combine(root, file);
             var player = new JavascriptPlayer(scriptPath, _logger);
             players.Add(player);
@@ -80,8 +90,19 @@ public class PlayerLoader : IPlayerLoader
         var path = Path.Combine(Strings.Players, Enum.GetName(Platform.CS)!);
         var files = Directory.GetFiles(path);
 
+        if (players.Count >= 4)
+        {
+            return;
+        }
+
         foreach (var file in files)
         {
+
+            if (players.Count >= 4)
+            {
+                return;
+            }
+
             var loadContext = new AssemblyLoadContext(Guid.NewGuid().ToString(), true);
             _loadAssemblies.Add(loadContext);
 

@@ -13,7 +13,12 @@ public class CenterXMultiConverter : MultiConverterMarkupExtension<CenterXMultiC
             var width = (double)values[0];
             var height = (double)values[1];
 
-            var centerWidth = width / 2;
+            if (width < height)
+            {
+                return 0;
+            }
+
+            var centerWidth = width / 2;            
             var centerHeight = height / 2;
 
             return centerWidth - centerHeight;
