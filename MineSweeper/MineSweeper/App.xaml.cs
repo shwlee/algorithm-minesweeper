@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MineSweeper.Contracts;
 using MineSweeper.Services;
+using MineSweeper.Utils;
 using MineSweeper.Utils.Players;
 using MineSweeper.ViewModels;
+using NLog;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -15,12 +17,6 @@ namespace MineSweeper;
 /// </summary>
 public partial class App : Application
 {
-    [DllImport("kernel32.dll")]
-    public static extern Boolean AllocConsole();
-
-    [DllImport("kernel32.dll")]
-    public static extern Boolean FreeConsole();
-
     private IServiceProvider _services;
 
     public App()
@@ -31,12 +27,6 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         // test
-#if DEBUG
-        if (Debugger.IsAttached == false)
-        {
-            AllocConsole();
-        }
-#endif
 
         var appViewModel = _services.GetService<AppViewModel>();
         var mainWindow = new MainWindow();
@@ -48,7 +38,8 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        FreeConsole();
+        var consoleOut = _services.GetService<IConsoleOut>();
+        consoleOut?.CloseConsole();
 
         base.OnExit(e);
     }
@@ -57,6 +48,10 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        services.AddSingleton<IConsoleOut, ConsoleOutRedirector>();
+
+        var logger = LogManager.GetCurrentClassLogger();
+        services.AddSingleton<ILogger>(logger);
         services.AddSingleton<AppViewModel>();
         services.AddSingleton<IDispatcherService, DispatcherService>();
         services.AddSingleton<IPlayerLoader, PlayerLoader>();

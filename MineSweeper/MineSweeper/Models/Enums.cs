@@ -2,7 +2,7 @@
 
 public enum Platform
 {
-    CS,
+    CS = 0,
 
     CPP,
 

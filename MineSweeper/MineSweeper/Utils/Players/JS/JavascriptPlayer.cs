@@ -1,6 +1,7 @@
 ﻿using Microsoft.ClearScript.V8;
 using MineSweeper.Extensions;
 using MineSweeper.Player;
+using NLog;
 using System;
 using System.IO;
 
@@ -10,13 +11,18 @@ public class JavascriptPlayer : IPlayer, IDisposable
 {
     V8ScriptEngine _engine;
 
-    public JavascriptPlayer(string jsFilePath)
+    private readonly ILogger _logger;
+
+    public JavascriptPlayer(string jsFilePath, ILogger logger)
     {
 
         _engine = new V8ScriptEngine();
-        _engine.AddHostType("console", typeof(console));
+        var logConsole = new ConsoleLoggerMediator(logger);
+        _engine.AddHostObject("console", logConsole);
         var script = File.ReadAllText(jsFilePath);
         _engine.Execute(script);
+
+        _logger = logger;
     }
 
     public string GetName()

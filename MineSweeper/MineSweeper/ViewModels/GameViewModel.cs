@@ -6,6 +6,7 @@ using MineSweeper.Exceptions;
 using MineSweeper.Models;
 using MineSweeper.Models.Messages;
 using MineSweeper.Player;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -69,9 +70,12 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     [ObservableProperty]
     private ObservableCollection<Box>? _boxes;
 
-    public GameViewModel()
+    private readonly ILogger _logger;
+
+    public GameViewModel(ILogger logger)
     {
         this.IsActive = true;
+        _logger = logger;
     }
 
     protected override void OnActivated()

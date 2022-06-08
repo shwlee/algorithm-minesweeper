@@ -3,6 +3,7 @@ using MineSweeper.Contracts;
 using MineSweeper.Models;
 using MineSweeper.Player;
 using MineSweeper.Utils.Players.JS;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,10 @@ public class PlayerLoader : IPlayerLoader
     private List<AssemblyLoadContext> _loadAssemblies = new List<AssemblyLoadContext>(4);
 
     private Type playerInterface = typeof(IPlayer);
+
+    private readonly ILogger _logger;
+
+    public PlayerLoader(ILogger logger) => _logger = logger;
 
     public IEnumerable<IPlayer> LoadPlayers()
     {
@@ -60,7 +65,7 @@ public class PlayerLoader : IPlayerLoader
         foreach (var file in files)
         {
             var scriptPath = Path.Combine(root, file);
-            var player = new JavascriptPlayer(scriptPath);
+            var player = new JavascriptPlayer(scriptPath, _logger);
             players.Add(player);
         }
     }

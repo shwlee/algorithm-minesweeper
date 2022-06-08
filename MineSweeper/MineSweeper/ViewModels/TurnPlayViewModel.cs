@@ -6,6 +6,7 @@ using MineSweeper.Exceptions;
 using MineSweeper.Extensions;
 using MineSweeper.Models;
 using MineSweeper.Models.Messages;
+using NLog;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -33,6 +34,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
     private Task? _autoPlay;
 
+    private readonly ILogger _logger;
+
     [ObservableProperty]
     private bool _canControlPlay = true;
 
@@ -58,12 +61,13 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
     }
 
-    public TurnPlayViewModel(IGameState gameState, IPlayerLoader playerLoader, IDispatcherService dispatcherService)
+    public TurnPlayViewModel(IGameState gameState, IPlayerLoader playerLoader, IDispatcherService dispatcherService, ILogger logger)
     {
         _gameState = gameState;
         _playerLoader = playerLoader;
         _dispatcherService = dispatcherService;
         IsActive = true;
+        _logger = logger;
     }
 
     protected override void OnActivated()
@@ -120,7 +124,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             var board = GetCurrentBoard();
 
             ExecuteTurn(board, false);
-            
+
             // 수동턴에 의한 lastTurnPlayer 와 TurnCount 보정.
             if (_lastTurnPlayer >= Players!.Count - 1)
             {

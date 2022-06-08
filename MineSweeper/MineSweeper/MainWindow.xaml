@@ -230,6 +230,14 @@
             </DataTemplate.Triggers>
         </DataTemplate>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="F10"
+            Command="{Binding OpenConsoleCommand}" />
+        <KeyBinding
+            Key="F12"
+            Command="{Binding CloseConsoleCommand}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />

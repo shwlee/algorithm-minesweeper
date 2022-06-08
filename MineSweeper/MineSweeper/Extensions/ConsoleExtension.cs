@@ -1,10 +1,17 @@
-﻿using System;
+﻿using NLog;
+using System;
 
 namespace MineSweeper.Extensions;
 
-public static class console
+public class ConsoleLoggerMediator
 {
+    private readonly ILogger _logger;
+
+    public ConsoleLoggerMediator(ILogger logger) => _logger = logger;
+
 #pragma warning disable IDE1006 // Naming Styles
-    public static void log(object arg) => Console.WriteLine(arg);
+
+    public void log(object arg) => _logger.Info(arg);
+
 #pragma warning restore IDE1006 // Naming Styles
 }

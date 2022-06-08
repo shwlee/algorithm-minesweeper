@@ -9,15 +9,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="nlog.config" CopyToOutputDirectory="Always" />
+    <None Remove="C:\Users\heeya\.nuget\packages\nlog.config\4.7.15\contentFiles\any\any\NLog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.ClearScript.V8" Version="7.3.0" />
     <PackageReference Include="Microsoft.ClearScript.V8.Native.win-x64" Version="7.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="NLog" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MineSweeper.Player\MineSweeper.Player.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
