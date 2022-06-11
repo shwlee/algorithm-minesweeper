@@ -5,7 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU;x64</Platforms>    
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MineSweeper.Commons\MineSweeper.Commons.csproj" />
+    <ProjectReference Include="..\MineSweeper.Defines\MineSweeper.Defines.csproj" />
+    <ProjectReference Include="..\MineSweeper.Models\MineSweeper.Models.csproj" />
     <ProjectReference Include="..\MineSweeper.Player\MineSweeper.Player.csproj" />
+    <ProjectReference Include="..\MineSweeper.Services\MineSweeper.Services.csproj" />
+    <ProjectReference Include="..\MineSweeper.ViewModels\MineSweeper.ViewModels.csproj" />
+    <ProjectReference Include="..\MineSweeper.Views.Converters\MineSweeper.Views.Converters.csproj" />
+    <ProjectReference Include="..\MineSweeper.Views.Mappings\MineSweeper.Views.Mappings.csproj" />
+    <ProjectReference Include="..\MineSweeper.Views\MineSweeper.Views.csproj" />
   </ItemGroup>
 
   <ItemGroup>

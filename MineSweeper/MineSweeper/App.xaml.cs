@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MineSweeper.Contracts;
+using MineSweeper.Defines.Games;
+using MineSweeper.Defines.Utils;
 using MineSweeper.Services;
 using MineSweeper.Utils;
 using MineSweeper.Utils.Players;
 using MineSweeper.ViewModels;
 using NLog;
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace MineSweeper;

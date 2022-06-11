@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ClearScript.V8" Version="7.3.0" />
+    <PackageReference Include="Microsoft.ClearScript.V8.Native.win-x64" Version="7.3.0" />
+    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+    <PackageReference Include="NLog" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MineSweeper.Commons\MineSweeper.Commons.csproj" />
+    <ProjectReference Include="..\MineSweeper.Defines\MineSweeper.Defines.csproj" />
+    <ProjectReference Include="..\MineSweeper.Models\MineSweeper.Models.csproj" />
+  </ItemGroup>
+
+</Project>

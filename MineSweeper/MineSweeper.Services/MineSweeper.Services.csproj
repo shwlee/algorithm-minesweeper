@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MineSweeper.Commons\MineSweeper.Commons.csproj" />
+    <ProjectReference Include="..\MineSweeper.Defines\MineSweeper.Defines.csproj" />
+  </ItemGroup>
+
+</Project>
