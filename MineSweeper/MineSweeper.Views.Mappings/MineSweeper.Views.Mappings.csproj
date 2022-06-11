@@ -11,7 +11,9 @@
   <ItemGroup>
     <ProjectReference Include="..\MineSweeper.Models\MineSweeper.Models.csproj" />
     <ProjectReference Include="..\MineSweeper.Relay\MineSweeper.Relay.csproj" />
+    <ProjectReference Include="..\MineSweeper.ViewModels\MineSweeper.ViewModels.csproj" />
     <ProjectReference Include="..\MineSweeper.Views.Converters\MineSweeper.Views.Converters.csproj" />
+    <ProjectReference Include="..\MineSweeper.Views\MineSweeper.Views.csproj" />
   </ItemGroup>
 
 </Project>

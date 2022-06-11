@@ -2,6 +2,7 @@
 using MineSweeper.Models;
 using MineSweeper.Player;
 using MineSweeper.ViewModels.Constants;
+using MineSweeper.ViewModels.Sample;
 using MineSweeper.ViewModels.Utils.Players;
 using NLog;
 using System.Reflection;
@@ -30,12 +31,12 @@ public class PlayerLoader : IPlayerLoader
 
         // TODO : 최대 4 명 로딩 체크.
         var players = new List<IPlayer>(4);
-        //players.Add(new SamplePlayer());
-        //players.Add(new SamplePlayer());
+        players.Add(new SamplePlayer());
+        players.Add(new SamplePlayer());
         //players.Add(new SamplePlayer());
         //players.Add(new SamplePlayer());
 
-        //return players;
+        return players;
 
         // load players
         // load c#

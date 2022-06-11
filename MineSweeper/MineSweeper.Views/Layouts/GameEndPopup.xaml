@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="MineSweeper.Views.Layouts.GameEndPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Height="550"
+    Width="800">
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <!--  winner label  -->
+        <Grid Grid.Row="0">
+            <TextBlock
+                Text="GAME OVER!"
+                FontSize="100"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center" />
+        </Grid>
+
+        <!--  winner info  -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                FontSize="50"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="Winner" />
+            <ContentControl
+                Grid.Row="1"
+                Content="{Binding Winner}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center" />
+        </Grid>
+
+        <!--  all players info  -->
+        <Grid Grid.Row="2">
+            <WrapPanel Grid.Row="1">
+                <ItemsControl
+                    ItemsSource="{Binding Players}"
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type WrapPanel}}}"
+                    ItemTemplate="{StaticResource ResultPlayers}"
+                    HorizontalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </WrapPanel>
+        </Grid>
+
+        <!--  controls  -->
+        <Grid Grid.Row="3">
+            <Button
+                Content="Close"
+                Width="100"
+                Height="27"
+                VerticalAlignment="Center"
+                Command="{Binding CloseCommand}" />
+        </Grid>
+    </Grid>
+</UserControl>

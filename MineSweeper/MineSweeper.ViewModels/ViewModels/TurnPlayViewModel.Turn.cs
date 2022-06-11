@@ -1,9 +1,7 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Messaging;
 using MineSweeper.Commons.Extensions;
 using MineSweeper.Defines.Games;
 using MineSweeper.Models;
-using MineSweeper.Models.Messages;
 using MineSweeper.ViewModels.Exceptions;
 using System.Runtime.InteropServices;
 
@@ -11,36 +9,6 @@ namespace MineSweeper.ViewModels;
 
 public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 {
-    protected override void OnActivated()
-    {
-        Messenger.Register<TurnPlayViewModel, GameMessage>(this, (r, m) => r.GameMessage(m));
-    }
-
-    private async void GameMessage(GameMessage message)
-    {
-        // game 정리. (player score 등)
-        var state = message.State;
-        switch (state)
-        {
-            case GameStateMessage.Set:
-                _lastTurnPlayer = 0;
-                AutoSpeed = AutoPlay.Stop;
-                TurnCount = 1;
-                // TODO : players 정리해야하나
-                // player load / clear 에 대한 별도 기능 필요.
-                LoadPlayers();
-
-                break;
-            case GameStateMessage.Start:
-                break;
-            case GameStateMessage.GameOver:
-                await StopAutoPlay();
-
-                // TODO : 후처리.
-                break;
-        }
-    }
-
     private async Task ExecuteTurn(int[] board, [Optional] bool useException)
     {
         try
@@ -117,6 +85,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                     if (IsGameOver())
                     {
                         isGameOver = true;
+
+                        GameOver();
                         break;
                     }
 
@@ -143,6 +113,10 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             {
                 CanControlPlay = true;
             }
+        }
+        catch(GameOverException gameOver)
+        {
+            GameOver(gameOver.GameOverPlayer);
         }
         catch (Exception ex)
         {

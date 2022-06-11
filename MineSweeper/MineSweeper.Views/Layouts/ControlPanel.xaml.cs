@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace MineSweeper.Views.Views;
+namespace MineSweeper.Views.Layouts;
 /// <summary>
 /// Interaction logic for GameControlPanel.xaml
 /// </summary>

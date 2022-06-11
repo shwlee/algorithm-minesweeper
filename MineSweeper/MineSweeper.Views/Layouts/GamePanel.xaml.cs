@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MineSweeper.Views.Views;
+namespace MineSweeper.Views.Layouts;
 /// <summary>
 /// Interaction logic for GamePanel.xaml
 /// </summary>

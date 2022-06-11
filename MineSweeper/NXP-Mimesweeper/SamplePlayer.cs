@@ -57,6 +57,17 @@ public class SamplePlayer
                 composition[i] = block;
             }
 
+            // turn 에 관계없이 startup area 중 열지 않은 box 가 있으면 먼저 연다.
+            var startupArea = GetStartupArea(board.Length);
+            foreach (var startup in startupArea)
+            {
+                var block = composition[startup];
+                if (block.State is -1)
+                {
+                    return new PlayContext(PlayerAction.Open, block.Index);
+                }
+            }
+
             // 가장 작은 number 를 가진 box 순서 정렬
             var targets = composition.Where(box => box.State > 0).OrderBy(box => box.State).ToList();
 
@@ -220,9 +231,9 @@ public class SamplePlayer
     // TODO : test 후 삭제.
     private (PlayerAction firstAction, int firstPosition) FirstAct(int[] board)
     {
-        var startupArea = StartupArea(board.Length);
+        var startupArea = GetStartupArea(board.Length);
         var unopeneds = startupArea.Where(position => board[position] is -1).ToList();
-        
+
         if (unopeneds.Count is 0)
         {
             return (PlayerAction.Open, -1);
@@ -236,7 +247,7 @@ public class SamplePlayer
         return (PlayerAction.Open, position);
     }
 
-    private int[] StartupArea(int boardLength)
+    private int[] GetStartupArea(int boardLength)
     {
         var leftTop = 0;
         var rightTop = _column - 1;

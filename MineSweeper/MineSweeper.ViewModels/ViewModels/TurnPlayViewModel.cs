@@ -1,12 +1,16 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using MineSweeper.Commons.Extensions;
 using MineSweeper.Defines.Games;
 using MineSweeper.Defines.Utils;
 using MineSweeper.Models;
+using MineSweeper.Models.Messages;
+using MineSweeper.Models.Models.Messages;
 using MineSweeper.ViewModels.Exceptions;
 using NLog;
 using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
 
 namespace MineSweeper.ViewModels;
 
@@ -61,6 +65,71 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         _dispatcherService = dispatcherService;
         _logger = logger;
         IsActive = true;
+    }
+
+    protected override void OnActivated()
+    {
+        Messenger.Register<TurnPlayViewModel, GameMessage>(this, (r, m) => r.GameMessage(m));
+    }
+
+    private async void GameMessage(GameMessage message)
+    {
+        // game 정리. (player score 등)
+        var state = message.State;
+        switch (state)
+        {
+            case GameStateMessage.Set:
+                _lastTurnPlayer = 0;
+                AutoSpeed = AutoPlay.Stop;
+                TurnCount = 1;
+                // TODO : players 정리해야하나
+                // player load / clear 에 대한 별도 기능 필요.
+                LoadPlayers();
+
+                break;
+            case GameStateMessage.Start:
+                break;
+            case GameStateMessage.GameOver:
+                await StopAutoPlay();
+
+                // 사실상 없다.
+                GameOver();
+
+                // TODO : 후처리.
+                break;
+        }
+    }
+
+    private void GameOver([Optional] int? outPlayer)
+    {
+        if (Players is null)
+        {
+            return;
+        }
+
+        foreach (var player in Players!)
+        {
+            if (player is null)
+            {
+                continue;
+            }
+
+            if (outPlayer is not null)
+            {
+                if (player.Index == outPlayer)
+                {
+                    player.Score = 0; // 탈락 / 지뢰 밟으면 0점 처리.
+                    player.IsOutPlayer = true;
+                    continue;
+                }
+            }
+
+            var score = _gameState.GetResultScore(player.Index);
+            player.Score = score;
+        }
+
+        var winnerMessage = new WinnerPopupMessage(Players.ToList());
+        Messenger.Send(winnerMessage);
     }
 
     [ICommand]
@@ -194,7 +263,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
                     AutoSpeed = AutoPlay.Stop;
                     CanControlPlay = true;
-                    return;
+                    break;
                 }
             }
         }, cancelToken);

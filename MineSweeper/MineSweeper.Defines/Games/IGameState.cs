@@ -14,6 +14,8 @@ public interface IGameState
 
     int GetScore(int playerIndex);
 
+    int GetResultScore(int playerIndex);
+
     void Set(PlayContext context, int playerIndex);
 
     bool IsGameOver();

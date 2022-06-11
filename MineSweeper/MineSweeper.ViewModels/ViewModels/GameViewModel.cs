@@ -140,6 +140,13 @@ public partial class GameViewModel : ObservableRecipient, IGameState
             return true;
         }
 
+        // 열지 않은 박스가 남아 있으면 계속 진행.
+        if (_boxList.Any(box => box.IsOpened is false))
+        {
+            return false;
+        }
+
+        // 남은 모든 mine box 가 mark 일 때
         if (_boxList.Where(box => box.IsMine).All(box => box.IsMarked))
         {
             return true;
@@ -157,6 +164,13 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     {
         var score = _boxList.Where(box => box.Owner == playerIndex && box.IsMarked is false).Sum(box => box.Number);
         return score;
+    }
+
+    public int GetResultScore(int playerIndex)
+    {
+        var inGameScore = GetScore(playerIndex);
+        var resultScore = _boxList.Count(box => box.Owner == playerIndex && box.IsMarked) * 5; // mark 1개당 5점 추가.
+        return resultScore + inGameScore;
     }
 
     [ICommand]
@@ -274,14 +288,17 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
             Verify(player);
         }
-        catch (GameOverException gameOver)
+        //catch (GameOverException gameOver)
+        catch (Exception ex)
         {
             _isInitialized = false;
 
-            Messenger.Send<GameMessage>(new GameMessage(GameStateMessage.GameOver));
+            //Messenger.Send<GameMessage>(new GameMessage(GameStateMessage.GameOver));
             // TODO : logging.
 
             // TODO : 게임 종료 처리. (정산. 게임 종료 애니메이션 등.)
+
+            throw;
         }
     }
 
@@ -298,19 +315,33 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
     private void MarkBox(Box box, [Optional] int? player)
     {
-        if (box.IsOpened)
+        try
         {
-            return;
-        }
+            if (box.IsOpened)
+            {
+                return;
+            }
 
-        box.IsMarked = box.IsMarked == false;
-        box.SelectedMarker = box.IsMarked ? player ?? -1 : -1;
-        if (player is not null)
+            box.IsMarked = box.IsMarked == false;
+            box.SelectedMarker = box.IsMarked ? player ?? -1 : -1;
+            if (player is not null)
+            {
+                box.Owner = player.Value;
+            }
+
+            UpdateBoardData();
+
+            Verify(player);
+        }
+        //catch (GameOverException gameOver)
+        catch (Exception ex)
         {
-            box.Owner = player.Value;
-        }
+            _isInitialized = false;
 
-        UpdateBoardData();
+            //Messenger.Send<GameMessage>(new GameMessage(GameStateMessage.GameOver));
+
+            throw;
+        }
     }
 
     private void OpenAroundBoxes(int column, int row, int? player)

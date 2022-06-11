@@ -5,7 +5,6 @@ using MineSweeper.Services;
 using MineSweeper.Utils;
 using MineSweeper.Utils.Players;
 using MineSweeper.ViewModels;
-using NLog;
 using System;
 using System.Windows;
 
@@ -47,15 +46,15 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        services.AddSingleton(Commons.Utils.Logger.GetLogger());
         services.AddSingleton<IConsoleOut, ConsoleOutRedirector>();
-
-        var logger = LogManager.GetCurrentClassLogger();
-        services.AddSingleton<ILogger>(logger);
-        services.AddSingleton<AppViewModel>();
         services.AddSingleton<IDispatcherService, DispatcherService>();
+
+        services.AddSingleton<INotificationPopup, NotificationPopupViewModel>();
         services.AddSingleton<IPlayerLoader, PlayerLoader>();
         services.AddSingleton<IGameState, GameViewModel>();
         services.AddSingleton<ITurnProcess, TurnPlayViewModel>();
+        services.AddSingleton<AppViewModel>();
 
         return services.BuildServiceProvider();
     }
