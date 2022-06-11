@@ -65,6 +65,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         _dispatcherService = dispatcherService;
         _logger = logger;
         IsActive = true;
+
+        _logger.Info("Turn created!");
     }
 
     protected override void OnActivated()
@@ -82,10 +84,11 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 _lastTurnPlayer = 0;
                 AutoSpeed = AutoPlay.Stop;
                 TurnCount = 1;
-                // TODO : players 정리해야하나
-                // player load / clear 에 대한 별도 기능 필요.
+                
+                // TODO : player load / clear 에 대한 별도 기능 필요.
                 LoadPlayers();
 
+                _logger.Info($"Player loaded. {string.Join(",", Players!.Select(player => $"{player.Index}-{player.Name}"))}");
                 break;
             case GameStateMessage.Start:
                 break;
@@ -94,7 +97,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
                 // 사실상 없다.
                 GameOver();
-
+                
                 // TODO : 후처리.
                 break;
         }
@@ -136,6 +139,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
         var winnerMessage = new WinnerPopupMessage(Players.ToList());
         Messenger.Send(winnerMessage);
+
+        _logger.Info($"Game Over. turn:{TurnCount}. players: {string.Join(",", Players!.Select(player => $"[{player.Index}] {player.Name}({player.Score})"))}");
     }
 
     [ICommand]
@@ -175,8 +180,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
         catch (Exception ex)
         {
-            // TODO : logger
-            // TODO : 후처리.
+            _logger.Error(ex);
+            // TODO : 후처리?
         }
         finally
         {
@@ -196,6 +201,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
         catch (Exception ex)
         {
+            _logger.Error(ex);
             CanControlPlay = true;
         }
     }
@@ -218,9 +224,11 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             {
                 case AutoPlay.Stop:
                     await StopAutoPlay();
+                    _logger.Info($"Stop auto play");
                     break;
                 case AutoPlay.X1:
                     StartAutoPlay();
+                    _logger.Info($"Start auto play. speed: x1");
                     break;
                 case AutoPlay.X2:
                 case AutoPlay.X3:
@@ -230,6 +238,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         finally
         {
             AutoSpeed = currentSpeed;
+            _logger.Info($"Set auto play speed: {AutoSpeed}");
         }
     }
 
@@ -358,10 +367,12 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             _autoPlayCancelTokenSource?.Cancel();
             _autoPlayCancelTokenSource?.Dispose();
             _autoPlayCancelTokenSource = new CancellationTokenSource();
+
+            _logger.Info($"Cancel auto play.");
         }
         catch (Exception ex)
         {
-
+            _logger.Error(ex);
         }
     }
 }

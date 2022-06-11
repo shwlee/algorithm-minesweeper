@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace MineSweeper.ViewModels.Exceptions;
 
@@ -7,11 +6,16 @@ namespace MineSweeper.ViewModels.Exceptions;
 [Serializable]
 public class TurnContinueException : Exception
 {
-    public TurnContinueException() { }
+    public int? Player { get; }
 
-    public TurnContinueException(string message) : base(message) { }
+    public TurnContinueException(int? player) : this(player, null) { }
 
-    public TurnContinueException(string message, Exception inner) : base(message, inner) { }
+    public TurnContinueException(int? player, string? message) : this(player, message, null) { }
+
+    public TurnContinueException(int? player, string? message, Exception? inner) : base(message, inner)
+    {
+        Player = player;
+    }
 
     protected TurnContinueException(
       SerializationInfo info,

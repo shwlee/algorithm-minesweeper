@@ -15,29 +15,40 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
         try
         {
+            _logger.Info($"Turn {TurnCount} player:{player.Index} go.");
+
             if (player.IsOutPlayer)
             {
-                throw new TurnContinueException();
+                throw new TurnContinueException(player.Index);
             }
 
             if (player.IsClosePlayer)
             {
-                throw new TurnContinueException();
+                throw new TurnContinueException(player.Index);
             }
 
             var action = await Task.Run(() => player.Turn.Turn(board, TurnCount)).Timeout(TimeSpan.FromMilliseconds(3000)); // TODO : to config            
+            _logger.Info($"Act. player:{player.Index}, turn:{TurnCount}, action:{action.Action}, postion:{action.Position}");
+
             if (action.Action is Player.PlayerAction.Close)
             {
                 player.IsClosePlayer = true;
-                throw new TurnContinueException();
+
+                _logger.Info($"Player set closed. turn:{TurnCount}, player:{player.Index}");
+
+                throw new TurnContinueException(player.Index);
             }
 
             _gameState.Set(action, player.Index);
 
             player.Score = _gameState.GetScore(player.Index);
+
+            _logger.Info($"Player {player.Index} in-game score : {player.Score}. turn:{TurnCount}");
         }
         catch (TurnContinueException continueEx)
         {
+            _logger.Info($"Skip this player. player:{continueEx.Player}");
+
             if (useException)
             {
                 throw;
@@ -47,14 +58,14 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         {
             switch (ex)
             {
-                // TODO : 예외를 발생시킨 플레이어는 탈락 처리.
+                // 예외를 발생시킨 플레이어는 탈락 처리.
                 case TimeoutException:
                 default:
                     SetFailedPlayer(player);
                     break;
             }
 
-            // TODO : logging;
+            _logger.Error(ex);
         }
     }
 
@@ -62,6 +73,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
     {
         player.IsOutPlayer = true;
         player.Score = 0;
+
+        _logger.Info($"Player set to Fail. turn:{TurnCount}, player:{player.Index}, score:{player.Score}");
     }
 
     private async Task ExecuteTurnAll([Optional] AutoPlay? playSpeed, [Optional, DefaultParameterValue(true)] bool useControl)
@@ -96,6 +109,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 {
                     await ExecuteTurn(board, true);
 
+                    _logger.Info($"Turn player is completed. player:{player.Index}");
+
                     if (IsGameOver())
                     {
                         isGameOver = true;
@@ -109,9 +124,9 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 }
                 catch (TurnContinueException turnContinue)
                 {
-                    // TODO : logging
                     if (Players.All(player => player.IsClosePlayer))
                     {
+                        _logger.Info($"All players set closed. turn:{TurnCount}");
                         throw new GameOverException(null);
                     }
 
@@ -139,8 +154,9 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
         catch (Exception ex)
         {
+            _logger.Error(ex);
+
             throw;
-            // TODO : logger
             // TODO : 후처리.
         }
     }

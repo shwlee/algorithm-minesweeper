@@ -73,6 +73,8 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     {
         this.IsActive = true;
         _logger = logger;
+
+        _logger.Info("Game created!");
     }
 
     protected override void OnActivated()
@@ -107,7 +109,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
             {
                 PlayerAction.Open => ViolationReason.TryOpenOutOfRange,
                 PlayerAction.Mark => ViolationReason.TryMarkOutOfRange,
-                _ => throw new TurnContinueException()
+                _ => throw new TurnContinueException(playerIndex)
             };
 
             throw new MineSweepViolationException(playerIndex, reason);
@@ -211,6 +213,9 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         _isInitialized = true;
 
         Messenger.Send(new GameMessage(GameStateMessage.Set));
+
+        _logger.Info($"Game init: columns:{_columns}, rows:{_rows}, mines:{_mineCount}");
+        _logger.Info($"board intialized: [{string.Join(",", _boxList.Select(box => box.IsMine ? -3 : box.Number))}]");
     }
 
     private void InitBoardData()
@@ -242,6 +247,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         });
 
         _board = board.ToArray();
+        _logger.Info($"board state: [{string.Join(",", _board)}]");
     }
 
 
@@ -256,27 +262,34 @@ public partial class GameViewModel : ObservableRecipient, IGameState
                     otherBox.IsOpened = true;
                 }
 
+                _logger.Info($"Hit a mine. Game Over! player:{player}, box:{box.X + (box.Y * _columns)} ({box.X}, {box.Y})");
+
                 // game over
                 throw new GameOverException(player);
             }
 
             if (box.IsMarked) // marking 된 box 는 열지 않는다.
             {
+                _logger.Info($"Tried mark the box already marked. player:{player}, box:{box.X + (box.Y * _columns)} ({box.X}, {box.Y})");
                 throw new MineSweepViolationException(player, ViolationReason.TryOpenAlreadyMarked);
             }
 
             if (box.IsOpened)
             {
+                _logger.Info($"Tried open the box already opened. player:{player}, box:{box.X + (box.Y * _columns)} ({box.X}, {box.Y})");
                 throw new MineSweepViolationException(player, ViolationReason.TryOpenAlreadyOpened);
             }
 
             UnselectOpener(player);
 
             box.IsOpened = true;
+
+            _logger.Info($"Box opened. player:{player}, box:{box.X + (box.Y * _columns)} ({box.X}, {box.Y})");
             box.SelectedOpener = player ?? -1;
             if (player is not null)
             {
                 box.Owner = player.Value;
+                _logger.Info($"Player got the score. player:{player}, box:{box.X + (box.Y * _columns)} ({box.X}, {box.Y}), point:{box.Number}");
             }
 
             if (box.Number is 0)
@@ -293,9 +306,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         {
             _isInitialized = false;
 
-            // TODO : logging.
-
-            // TODO : 게임 종료 처리. (정산. 게임 종료 애니메이션 등.)
+            _logger.Error(ex);
 
             throw;
         }
@@ -321,7 +332,11 @@ public partial class GameViewModel : ObservableRecipient, IGameState
                 return;
             }
 
+            // mark, demark 모두 가능
             box.IsMarked = box.IsMarked == false;
+
+            _logger.Info($"Box marked. player:{player}, box:{box.X + (box.Y * _columns)} ({box.X}, {box.Y}), marked state:{box.IsMarked}");
+
             box.SelectedMarker = box.IsMarked ? player ?? -1 : -1;
             if (player is not null)
             {
@@ -336,7 +351,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         {
             _isInitialized = false;
 
-            // TODO : log
+            _logger.Error(ex);
 
             throw;
         }
@@ -345,6 +360,8 @@ public partial class GameViewModel : ObservableRecipient, IGameState
     private void OpenAroundBoxes(int column, int row, int? player)
     {
         var aroundBoxes = GetAroundBoxes(column, row);
+        _logger.Info($"Player {player} select [{column + (row * _columns)}] around boxes. " +
+            $"boxes:{string.Join(",", aroundBoxes.Select(box => box?.X + (box?.Y * _columns)))}");
         foreach (var aroundBox in aroundBoxes)
         {
             if (aroundBox is null)
@@ -358,6 +375,9 @@ public partial class GameViewModel : ObservableRecipient, IGameState
             }
 
             aroundBox.IsOpened = true;
+
+            _logger.Info($"Box opened. player:{player}, box:{column + (row * _columns)} ({column}, {row})");
+
             if (player is not null)
             {
                 aroundBox.Owner = player.Value;
@@ -500,6 +520,8 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         if (IsGameOver())
         {
             // TODO : log
+
+            _logger.Info($"Game is over in this turn. player:{player}");
 
             throw new GameOverException(player);
         }
