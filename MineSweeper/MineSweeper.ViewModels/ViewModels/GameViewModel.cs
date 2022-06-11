@@ -77,6 +77,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
     protected override void OnActivated()
     {
+        // 수동으로 조작했을 때 처리하기 위한 옵션.
         Messenger.Register<GameViewModel, OpenBoxMessage>(this, (r, m) => r.OpenBox(m.Target));
         Messenger.Register<GameViewModel, MarkBoxMessage>(this, (r, m) => r.MarkBox(m.Target));
     }
@@ -280,7 +281,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
             if (box.Number is 0)
             {
-                // 인근 박스를 모두 연다.            
+                // 0을 찍으면 인근 박스를 모두 연다.            
                 OpenAroundBoxes(box.X, box.Y, player);
             }
 
@@ -288,12 +289,10 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
             Verify(player);
         }
-        //catch (GameOverException gameOver)
         catch (Exception ex)
         {
             _isInitialized = false;
 
-            //Messenger.Send<GameMessage>(new GameMessage(GameStateMessage.GameOver));
             // TODO : logging.
 
             // TODO : 게임 종료 처리. (정산. 게임 종료 애니메이션 등.)
@@ -333,12 +332,11 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
             Verify(player);
         }
-        //catch (GameOverException gameOver)
         catch (Exception ex)
         {
             _isInitialized = false;
 
-            //Messenger.Send<GameMessage>(new GameMessage(GameStateMessage.GameOver));
+            // TODO : log
 
             throw;
         }

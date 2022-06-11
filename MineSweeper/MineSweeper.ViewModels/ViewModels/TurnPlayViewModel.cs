@@ -114,6 +114,12 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 continue;
             }
 
+            if (player.IsOutPlayer)
+            {
+                player.Score = 0; // 이미 out 이면 한 번 더 0 처리.
+                continue;
+            }
+
             if (outPlayer is not null)
             {
                 if (player.Index == outPlayer)

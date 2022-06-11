@@ -4,8 +4,5 @@ public class WinnerPopupMessage
 {
     public IEnumerable<TurnPlayer> Players { get; }
 
-    public WinnerPopupMessage(IEnumerable<TurnPlayer> players)
-    {
-        Players = players;
-    }
+    public WinnerPopupMessage(IEnumerable<TurnPlayer> players) => Players = players;
 }

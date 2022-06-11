@@ -11,9 +11,15 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 {
     private async Task ExecuteTurn(int[] board, [Optional] bool useException)
     {
+        var player = Players![_lastTurnPlayer];
+
         try
         {
-            var player = Players![_lastTurnPlayer];
+            if (player.IsOutPlayer)
+            {
+                throw new TurnContinueException();
+            }
+
             if (player.IsClosePlayer)
             {
                 throw new TurnContinueException();
@@ -30,10 +36,6 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
             player.Score = _gameState.GetScore(player.Index);
         }
-        catch (TimeoutException timeout)
-        {
-            // TODO : 탈락 처리.
-        }
         catch (TurnContinueException continueEx)
         {
             if (useException)
@@ -43,11 +45,23 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
         catch (Exception ex)
         {
+            switch (ex)
+            {
+                // TODO : 예외를 발생시킨 플레이어는 탈락 처리.
+                case TimeoutException:
+                default:
+                    SetFailedPlayer(player);
+                    break;
+            }
 
             // TODO : logging;
-            // TODO : 예외를 발생시킨 플레이어는 탈락 처리.
-            throw;
         }
+    }
+
+    private void SetFailedPlayer(TurnPlayer player)
+    {
+        player.IsOutPlayer = true;
+        player.Score = 0;
     }
 
     private async Task ExecuteTurnAll([Optional] AutoPlay? playSpeed, [Optional, DefaultParameterValue(true)] bool useControl)
@@ -80,7 +94,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 var board = GetCurrentBoard();
                 try
                 {
-                    await ExecuteTurn(board);
+                    await ExecuteTurn(board, true);
 
                     if (IsGameOver())
                     {
@@ -96,6 +110,11 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 catch (TurnContinueException turnContinue)
                 {
                     // TODO : logging
+                    if (Players.All(player => player.IsClosePlayer))
+                    {
+                        throw new GameOverException(null);
+                    }
+
                     continue;
                 }
                 finally
@@ -114,7 +133,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 CanControlPlay = true;
             }
         }
-        catch(GameOverException gameOver)
+        catch (GameOverException gameOver)
         {
             GameOver(gameOver.GameOverPlayer);
         }

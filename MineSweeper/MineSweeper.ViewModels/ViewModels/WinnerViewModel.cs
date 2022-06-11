@@ -14,12 +14,12 @@ public partial class WinnerViewModel : ObservableRecipient, IPopupContent
     public ObservableCollection<TurnPlayer> _players;
 
     [ObservableProperty]
-    public TurnPlayer? _winner;
+    public TurnPlayer? _winner; // 동점자가 있을 경우 뒤쪽 순번이 승리.
 
     public WinnerViewModel(IEnumerable<TurnPlayer> players)
     {
         _players = new ObservableCollection<TurnPlayer>(players);
-        _winner = Players?.MaxBy(player => player.Score);
+        _winner = Players?.OrderByDescending(player => player.Index).MaxBy(player => player.Score);
     }
 
     [ICommand]

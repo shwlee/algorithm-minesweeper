@@ -33,8 +33,8 @@ public class PlayerLoader : IPlayerLoader
         var players = new List<IPlayer>(4);
         players.Add(new SamplePlayer());
         players.Add(new SamplePlayer());
-        //players.Add(new SamplePlayer());
-        //players.Add(new SamplePlayer());
+        players.Add(new SamplePlayer());
+        players.Add(new SamplePlayer());
 
         return players;
 

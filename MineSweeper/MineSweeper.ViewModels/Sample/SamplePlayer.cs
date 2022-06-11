@@ -35,6 +35,11 @@ public class SamplePlayer : IPlayer
             return new PlayContext(firstAction, firstPosition);
         }
 
+        if (board.Length < 1)
+        {
+            Thread.Sleep(3500);
+        }
+
         return OpenTo(board);
 
         //return MarkTo(board);

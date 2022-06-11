@@ -19,7 +19,8 @@ public partial class TurnPlayer : ObservableObject
     [ObservableProperty]
     private bool _isOutPlayer;
 
-    public bool IsClosePlayer { get; set; }
+    [ObservableProperty]
+    public bool _isClosePlayer;
 
     public TurnPlayer(IPlayer player, int index)
     {

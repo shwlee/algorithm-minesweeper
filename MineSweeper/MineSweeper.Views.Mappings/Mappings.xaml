@@ -342,7 +342,19 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type models:TurnPlayer}">
-        <ContentPresenter ContentTemplate="{StaticResource TurnPlayerTemplate}" />
+        <Border
+            x:Name="PART_PlayerBorder"
+            BorderThickness="3"
+            BorderBrush="White">
+            <ContentPresenter ContentTemplate="{StaticResource TurnPlayerTemplate}" />
+        </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger
+                Binding="{Binding IsOutPlayer}"
+                Value="True">
+                <Setter TargetName="PART_PlayerBorder" Property="BorderBrush" Value="#FFDC1D0F" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
 
     <!--  popup  -->
