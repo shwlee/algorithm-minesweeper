@@ -304,8 +304,6 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         }
         catch (Exception ex)
         {
-            _isInitialized = false;
-
             _logger.Error(ex);
 
             throw;
@@ -349,8 +347,6 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         }
         catch (Exception ex)
         {
-            _isInitialized = false;
-
             _logger.Error(ex);
 
             throw;

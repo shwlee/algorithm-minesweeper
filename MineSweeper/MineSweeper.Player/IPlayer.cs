@@ -52,7 +52,7 @@ public interface IPlayer
 
             box == 4 // 열린 box. box 주위의 4개의 mine 이 존재하는 것을 의미.
             box == -1 // 닫힌 box.            
-            box == -2 // 닫힌 box. 누군가 box 에 마크했다.
+            box == -2 // 닫힌 box && 누군가 box 에 마크했다.
     */
 
 

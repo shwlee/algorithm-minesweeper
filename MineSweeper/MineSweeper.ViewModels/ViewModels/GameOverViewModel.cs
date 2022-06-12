@@ -22,7 +22,7 @@ public partial class GameOverViewModel : ObservableRecipient, IPopupContent
     public GameOverViewModel(IEnumerable<TurnPlayer> players, ILogger logger)
     {
         _players = new ObservableCollection<TurnPlayer>(players);
-        _winner = Players?.OrderByDescending(player => player.Index).MaxBy(player => player.Score);
+        _winner = _players?.OrderByDescending(player => player.Index).MaxBy(player => player.Score);
         if (_winner is not null)
         {
             _winner.IsWinner = true;

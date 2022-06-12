@@ -6,25 +6,24 @@ public class Player : IPlayer
 {
     // sample!
 
-    private SamplePlayer _sample;
-
     public Player()
     {
-        _sample = new SamplePlayer();
     }
 
     public string GetName()
     {
-        return "NXP Back-end Greg4";
+        return $"Greg-{DateTime.UtcNow.Ticks.ToString().Substring(14, 4)}";
     }
 
     public void Initialize(int myNumber, int column, int row, int totalMineCount)
     {
-        _sample.Initialize(myNumber, column, row, totalMineCount);        
     }
 
     public PlayContext Turn(int[] board, int turnCount)
     {
-        return _sample.Turn(board, turnCount);        
+        var unopened = board.Where(b => b is -1).ToList();
+        var randomIndex = new Random().Next(unopened.Count);
+
+        return new PlayContext(PlayerAction.Open, randomIndex);
     }
 }

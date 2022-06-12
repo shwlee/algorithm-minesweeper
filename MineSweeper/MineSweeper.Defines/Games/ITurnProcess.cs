@@ -2,4 +2,5 @@
 
 public interface ITurnProcess
 {
+    void ResetPlayers();
 }

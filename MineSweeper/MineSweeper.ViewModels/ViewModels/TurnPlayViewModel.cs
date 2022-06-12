@@ -86,6 +86,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 AutoSpeed = AutoPlay.Stop;
                 TurnCount = 1;
 
+                ShufflePlayers();
+
                 _logger.Info("Game initialized.");
                 break;
             case GameStateMessage.Start:
@@ -344,6 +346,11 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
             return true;
         }
 
+        if (Players!.All(player => player.IsOutPlayer))
+        {
+            return true;
+        }
+
         return false;
     }
 
@@ -381,6 +388,50 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         catch (Exception ex)
         {
             _logger.Error(ex);
+        }
+    }
+
+    public void ResetPlayers()
+    {
+        if (Players is null)
+        {
+            return;
+        }
+
+        foreach (var player in Players)
+        {
+            ResetPlayerState(player);
+        }
+    }
+
+    private void ResetPlayerState(TurnPlayer player)
+    {
+        player.IsClosePlayer = false;
+        player.IsWinner = false;
+        player.IsOutPlayer = false;
+    }
+
+    private void ShufflePlayers()
+    {
+        if (Players is null)
+        {
+            return;
+        }
+
+        var playersRef = Players.ToList();
+        Players.Clear();
+
+        (int columns, int rows) = _gameState.GetColumRows();
+        var orderedPlayers = playersRef.OrderBy(player => new Random().Next(columns * rows)).ToArray();
+        foreach (var player in orderedPlayers)
+        {
+            ResetPlayerState(player);
+            player.Score = 0;
+
+            var index = Array.IndexOf(orderedPlayers, player);
+            player.Index = index;
+
+            Players.Add(player);
         }
     }
 }

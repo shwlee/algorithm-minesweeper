@@ -241,7 +241,8 @@
         <Border
             Margin="2"
             BorderThickness="1"
-            BorderBrush="#FF959597">
+            BorderBrush="#FF959597"
+            ToolTip="{Binding Name}">
             <Grid
                 MinWidth="100"
                 Margin="5">

@@ -48,6 +48,8 @@ public partial class AppViewModel : ObservableRecipient
         _popup.IsPopup = false;
         _popup.Content = null;
 
+        _turn.ResetPlayers();
+
         _logger.Info("Close notification panel.");
     }
 
