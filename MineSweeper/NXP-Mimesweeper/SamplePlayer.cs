@@ -40,6 +40,24 @@ public class SamplePlayer
         //return MarkTo(board);
     }
 
+    private (PlayerAction firstAction, int firstPosition) FirstAct(int[] board)
+    {
+        var startupArea = GetStartupArea(board.Length);
+        var unopeneds = startupArea.Where(position => board[position] is -1).ToList();
+
+        if (unopeneds.Count is 0)
+        {
+            return (PlayerAction.Open, -1);
+        }
+
+        var seed = unopeneds.Count;
+        var selectedIndex = new Random().Next(0, seed - 1);
+        var unopened = unopeneds[selectedIndex];
+        var position = unopened;
+
+        return (PlayerAction.Open, position);
+    }
+
     private PlayContext OpenTo(int[] board)
     {
         try
@@ -229,23 +247,7 @@ public class SamplePlayer
     }
 
     // TODO : test 후 삭제.
-    private (PlayerAction firstAction, int firstPosition) FirstAct(int[] board)
-    {
-        var startupArea = GetStartupArea(board.Length);
-        var unopeneds = startupArea.Where(position => board[position] is -1).ToList();
 
-        if (unopeneds.Count is 0)
-        {
-            return (PlayerAction.Open, -1);
-        }
-
-        var seed = unopeneds.Count;
-        var selectedIndex = new Random().Next(0, seed - 1);
-        var unopened = unopeneds[selectedIndex];
-        var position = unopened;
-
-        return (PlayerAction.Open, position);
-    }
 
     private int[] GetStartupArea(int boardLength)
     {

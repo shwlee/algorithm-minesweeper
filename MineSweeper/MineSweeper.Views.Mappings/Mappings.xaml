@@ -363,8 +363,8 @@
                             <ColorAnimation
                                 Storyboard.TargetName="PART_PlayerBorder"
                                 Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-                                To="#FFFFF200"
-                                Duration="0:0:2"
+                                To="#FFFFC000"
+                                Duration="0:0:0.7"
                                 AutoReverse="True"
                                 RepeatBehavior="Forever" />
                         </Storyboard>
@@ -399,8 +399,8 @@
                                 Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
                                 To="Red"
                                 Duration="0:0:0.1"
-                                AutoReverse="True"
-                                RepeatBehavior="5x" />
+                                RepeatBehavior="5x"
+                                FillBehavior="HoldEnd" />
                         </Storyboard>
                     </BeginStoryboard>
                 </DataTrigger.EnterActions>

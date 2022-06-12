@@ -57,7 +57,7 @@ function Turn(board, turnCount) {
 }
 
 function firstAct(board) {
-    const startup = startupArea(board.length);
+    const startup = getStartupArea(board.length);
     const unopeneds = startup.filter((position) => board[position] < 0);
 
     if (unopeneds.length === 0) {
@@ -83,7 +83,7 @@ function firstAct(board) {
     };
 }
 
-function startupArea(boardLength) {
+function getStartupArea(boardLength) {
     const leftTop = 0;
     const rightTop = _column - 1;
     const leftBottom = _column * (_row - 1);
@@ -142,6 +142,14 @@ function openTo(board) {
         composition[i] = block;
     }
 
+    const getStartupAreass = getStartupArea(board.length);
+    for (let area of getStartupAreass) {
+        const block = composition[area];
+        if (block.state === -1) {
+            return new PlayerContext(playerAction.Open, block.index);
+        }
+    }
+
     const targets = composition.filter((box) => box.state > 0).sort();
     const withArounds = targets.map(function (target) {
         return {
@@ -149,10 +157,9 @@ function openTo(board) {
             state: target.state,
             around: getArroundBlocks(target.index, composition)
         }
-    })
-        .sort(function (a, b) {
-            return a.around.length - b.around.length >= 0;
-        });
+    }).sort(function (a, b) {
+        return a.around.length - b.around.length >= 0;
+    });
 
     for (let box of withArounds) {
 

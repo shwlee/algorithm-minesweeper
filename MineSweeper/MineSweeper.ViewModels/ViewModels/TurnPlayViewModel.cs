@@ -2,6 +2,7 @@
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using MineSweeper.Commons.Extensions;
+using MineSweeper.Defines.Enums;
 using MineSweeper.Defines.Games;
 using MineSweeper.Defines.Utils;
 using MineSweeper.Models;
@@ -44,7 +45,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
     private AutoPlay _autoSpeed;
 
     [ObservableProperty]
-    private ObservableCollection<TurnPlayer>? _players;
+    private ObservableCollection<TurnPlayer>? _players = new();
 
     public int TurnCount
     {
@@ -84,11 +85,8 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 _lastTurnPlayer = 0;
                 AutoSpeed = AutoPlay.Stop;
                 TurnCount = 1;
-                
-                // TODO : player load / clear 에 대한 별도 기능 필요.
-                LoadPlayers();
 
-                _logger.Info($"Player loaded. {string.Join(",", Players!.Select(player => $"{player.Index}-{player.Name}"))}");
+                _logger.Info("Game initialized.");
                 break;
             case GameStateMessage.Start:
                 break;
@@ -97,7 +95,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
                 // 사실상 없다.
                 GameOver();
-                
+
                 // TODO : 후처리.
                 break;
         }
@@ -144,12 +142,14 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
     }
 
     [ICommand]
-    private void LoadPlayers()
+    private void LoadPlayers(object platform)
     {
         (int columns, int rows) = _gameState.GetColumRows();
         _maxTurn = columns * rows;
 
-        var loadedPlayers = _playerLoader.LoadPlayers();
+        var loadPlatform = (Platform)platform;
+
+        var loadedPlayers = _playerLoader.LoadPlayers(loadPlatform);
         var players = loadedPlayers.OrderBy(player => new Random().Next(columns * rows))
                         .Select((player, i) => new TurnPlayer(player, i))
                         .ToList(); // random 배치.
@@ -160,6 +160,14 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
 
         Players = new ObservableCollection<TurnPlayer>(players);
+    }
+
+    [ICommand]
+    private void ClearLoadedPlayers()
+    {
+        _playerLoader.ClearLoadedPlayers();
+
+        Players!.Clear();
     }
 
     [ICommand]
@@ -272,7 +280,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
                 }
                 catch (Exception ex)
                 {
-                    // TODO : log
+                    _logger.Error(ex);
 
                     CancelAutoPlayer();
 
@@ -297,7 +305,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
         catch (Exception ex)
         {
-            // TODO : logging.
+            _logger.Error(ex);
         }
 
         CanControlPlay = true;

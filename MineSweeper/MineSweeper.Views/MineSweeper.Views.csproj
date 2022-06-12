@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MineSweeper.Defines\MineSweeper.Defines.csproj" />
     <ProjectReference Include="..\MineSweeper.Views.Converters\MineSweeper.Views.Converters.csproj" />
   </ItemGroup>
 

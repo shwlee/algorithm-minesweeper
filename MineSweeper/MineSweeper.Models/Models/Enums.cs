@@ -1,16 +1,5 @@
 ﻿namespace MineSweeper.Models;
 
-public enum Platform
-{
-    CS = 0,
-
-    CPP,
-
-    Javascript,
-
-    Python
-}
-
 public enum AutoPlay
 {
     Stop = 0,

@@ -4,9 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:e="clr-namespace:MineSweeper.Views.Converters.Extensions;assembly=MineSweeper.Views.Converters"
+    xmlns:define="clr-namespace:MineSweeper.Defines.Enums;assembly=MineSweeper.Defines"
     mc:Ignorable="d"
     d:DesignHeight="450"
-    d:DesignWidth="800">
+    d:DesignWidth="300">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -132,17 +134,24 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
+                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
                     <!--  플레이어 수동 로딩  -->
-                    <Button
-                        Grid.Column="0"
-                        Content="Load All"
-                        Command="{Binding Turn.LoadPlayersCommand}"
+                    <ComboBox
+                        x:Name="xPlatformSelector"
+                        ItemsSource="{e:EnumBindingSource {x:Type define:Platform}}"
+                        SelectedIndex="0"
                         Margin="2" />
                     <Button
                         Grid.Column="1"
                         Content="Load 1"
                         Command="{Binding Turn.LoadPlayersCommand}"
+                        CommandParameter="{Binding SelectedItem, ElementName=xPlatformSelector}"
+                        Margin="2" />
+                    <Button
+                        Grid.Column="2"
+                        Content="Clear"
+                        Command="{Binding Turn.ClearLoadedPlayersCommand}"
                         Margin="2" />
                 </Grid>
 

@@ -1,8 +1,7 @@
-﻿using MineSweeper.Defines.Utils;
-using MineSweeper.Models;
+﻿using MineSweeper.Defines.Enums;
+using MineSweeper.Defines.Utils;
 using MineSweeper.Player;
 using MineSweeper.ViewModels.Constants;
-using MineSweeper.ViewModels.Sample;
 using MineSweeper.ViewModels.Utils.Players;
 using NLog;
 using System.Reflection;
@@ -12,16 +11,54 @@ namespace MineSweeper.Utils.Players;
 
 public class PlayerLoader : IPlayerLoader
 {
-    private List<AssemblyLoadContext> _loadAssemblies = new List<AssemblyLoadContext>(4);
+    private List<AssemblyLoadContext> _loadAssemblies = new(4);
 
     private Type playerInterface = typeof(IPlayer);
 
+    private IFileDialogService _fileDialog;
+
     private readonly ILogger _logger;
 
-    public PlayerLoader(ILogger logger) => _logger = logger;
-
-    public IEnumerable<IPlayer> LoadPlayers()
+    public PlayerLoader(IFileDialogService fileDialog, ILogger logger)
     {
+        _logger = logger;
+        _fileDialog = fileDialog;
+    }
+
+    /// <summary>
+    /// 파일 플랫폼을 선택하여 로딩.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<IPlayer> LoadPlayers(Platform platform)
+    {
+        var players = new List<IPlayer>(4);
+
+        // file dialog
+        var files = _fileDialog.GetFiles(platform);
+        switch (platform)
+        {
+            case Platform.CS:
+                LoadSelectedCSharpPlayers(players, files!);
+                break;
+            case Platform.CPP:
+                break;
+            case Platform.Javascript:
+                LoadSelectedJavascriptFiles(players, files!);
+                break;
+            case Platform.Python:
+                break;
+        }
+
+        return players;
+    }
+
+    /// <summary>
+    /// TEST. 정해진 경로에서 자동 로딩.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<IPlayer> LoadAllPlayers()
+    {
+        // test용도에 가깝다. 실제로는 Platform 을 정해서 로딩한다.
         FolderCheck();
 
         _loadAssemblies.ForEach(asm => asm.Unload());
@@ -31,12 +68,6 @@ public class PlayerLoader : IPlayerLoader
 
         // TODO : 최대 4 명 로딩 체크.
         var players = new List<IPlayer>(4);
-        players.Add(new SamplePlayer());
-        players.Add(new SamplePlayer());
-        players.Add(new SamplePlayer());
-        players.Add(new SamplePlayer());
-
-        return players;
 
         // load players
         // load c#
@@ -44,6 +75,10 @@ public class PlayerLoader : IPlayerLoader
 
         // load javascript
         LoadJavaScriptPlayer(players, root);
+
+        // load c++
+
+        // load python
 
         return players;
     }
@@ -60,8 +95,13 @@ public class PlayerLoader : IPlayerLoader
             throw new ArgumentNullException(nameof(root));
         }
 
-        var path = Path.Combine(Strings.Players, Enum.GetName(Platform.Javascript)!);
+        var path = Path.Combine(root, Strings.Players, Enum.GetName(Platform.Javascript)!);
         var files = Directory.GetFiles(path, "*.js");
+        LoadSelectedJavascriptFiles(players, files);
+    }
+
+    private void LoadSelectedJavascriptFiles(List<IPlayer> players, string[] files)
+    {
         foreach (var file in files)
         {
             if (players.Count >= 4)
@@ -69,8 +109,7 @@ public class PlayerLoader : IPlayerLoader
                 return;
             }
 
-            var scriptPath = Path.Combine(root, file);
-            var player = new JavascriptPlayer(scriptPath, _logger);
+            var player = new JavascriptPlayer(file, _logger);
             players.Add(player);
         }
     }
@@ -82,7 +121,7 @@ public class PlayerLoader : IPlayerLoader
             throw new ArgumentNullException(nameof(root));
         }
 
-        var path = Path.Combine(Strings.Players, Enum.GetName(Platform.CS)!);
+        var path = Path.Combine(root, Strings.Players, Enum.GetName(Platform.CS)!);
         var files = Directory.GetFiles(path);
 
         if (players.Count >= 4)
@@ -90,6 +129,11 @@ public class PlayerLoader : IPlayerLoader
             return;
         }
 
+        LoadSelectedCSharpPlayers(players, files);
+    }
+
+    private void LoadSelectedCSharpPlayers(List<IPlayer> players, string[] files)
+    {
         foreach (var file in files)
         {
 
@@ -101,8 +145,7 @@ public class PlayerLoader : IPlayerLoader
             var loadContext = new AssemblyLoadContext(Guid.NewGuid().ToString(), true);
             _loadAssemblies.Add(loadContext);
 
-            var assemblyPath = Path.Combine(root, file);
-            var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
+            var assembly = loadContext.LoadFromAssemblyPath(file);
 
             Type? playerType = null;
             var types = assembly.GetExportedTypes();
@@ -150,5 +193,11 @@ public class PlayerLoader : IPlayerLoader
                 Directory.CreateDirectory(path);
             }
         }
+    }
+
+    public void ClearLoadedPlayers()
+    {
+        _loadAssemblies.ForEach(asm => asm.Unload());
+        _loadAssemblies.Clear();
     }
 }

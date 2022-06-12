@@ -49,6 +49,7 @@ public partial class App : Application
         services.AddSingleton(Commons.Utils.Logger.GetLogger());
         services.AddSingleton<IConsoleOut, ConsoleOutRedirector>();
         services.AddSingleton<IDispatcherService, DispatcherService>();
+        services.AddSingleton<IFileDialogService, FileDialogService>();
 
         services.AddSingleton<INotificationPopup, NotificationPopupViewModel>();
         services.AddSingleton<IPlayerLoader, PlayerLoader>();
