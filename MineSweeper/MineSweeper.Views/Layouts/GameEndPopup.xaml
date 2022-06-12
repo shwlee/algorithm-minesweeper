@@ -15,7 +15,7 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
-        <!--  winner label  -->
+        <!--  game over label  -->
         <Grid Grid.Row="0">
             <TextBlock
                 Text="GAME OVER!"

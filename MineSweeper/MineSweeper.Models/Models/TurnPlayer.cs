@@ -22,6 +22,9 @@ public partial class TurnPlayer : ObservableObject
     [ObservableProperty]
     public bool _isClosePlayer;
 
+    [ObservableProperty]
+    public bool _isWinner;
+
     public TurnPlayer(IPlayer player, int index)
     {
         Turn = player;

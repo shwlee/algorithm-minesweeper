@@ -354,11 +354,28 @@
                 Value="True">
                 <Setter TargetName="PART_PlayerBorder" Property="BorderBrush" Value="#FFDC1D0F" />
             </DataTrigger>
+            <DataTrigger
+                Binding="{Binding IsWinner}"
+                Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation
+                                Storyboard.TargetName="PART_PlayerBorder"
+                                Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                To="#FFFFF200"
+                                Duration="0:0:2"
+                                AutoReverse="True"
+                                RepeatBehavior="Forever" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+            </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
     <!--  popup  -->
-    <DataTemplate DataType="{x:Type vm:WinnerViewModel}">
+    <DataTemplate DataType="{x:Type vm:GameOverViewModel}">
         <l:GameEndPopup />
     </DataTemplate>
 

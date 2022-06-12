@@ -53,7 +53,7 @@ public partial class AppViewModel : ObservableRecipient
 
     private void PopupGameOver(WinnerPopupMessage message)
     {
-        var winner = new WinnerViewModel(message.Players, _logger);
+        var winner = new GameOverViewModel(message.Players, _logger);
         _popup.Content = winner;
         _popup.IsPopup = true;
 
