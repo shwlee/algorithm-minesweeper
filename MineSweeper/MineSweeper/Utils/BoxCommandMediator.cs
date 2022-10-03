@@ -1,5 +1,5 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using MineSweeper.Models;
 using MineSweeper.Models.Messages;
 
@@ -9,11 +9,11 @@ public class BoxCommandMediator : ObservableRecipient
 {
     public void OpenBox(Box box)
     {
-        Messenger.Send(new OpenBoxMessage(box));
+        WeakReferenceMessenger.Default.Send(new OpenBoxMessage(box));
     }
 
     public void MarkBox(Box box)
     {
-        Messenger.Send(new MarkBoxMessage(box));
+        WeakReferenceMessenger.Default.Send(new MarkBoxMessage(box));
     }
 }

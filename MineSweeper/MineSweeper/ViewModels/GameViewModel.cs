@@ -1,6 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MineSweeper.Contracts;
 using MineSweeper.Exceptions;
 using MineSweeper.Models;
@@ -76,8 +76,8 @@ public partial class GameViewModel : ObservableRecipient, IGameState
 
     protected override void OnActivated()
     {
-        Messenger.Register<GameViewModel, OpenBoxMessage>(this, (r, m) => r.OpenBox(m.Target));
-        Messenger.Register<GameViewModel, MarkBoxMessage>(this, (r, m) => r.MarkBox(m.Target));
+        WeakReferenceMessenger.Default.Register<GameViewModel, OpenBoxMessage>(this, (r, m) => r.OpenBox(m.Target));
+        WeakReferenceMessenger.Default.Register<GameViewModel, MarkBoxMessage>(this, (r, m) => r.MarkBox(m.Target));
     }
 
     public int[]? GetBoard()
@@ -85,7 +85,7 @@ public partial class GameViewModel : ObservableRecipient, IGameState
         return _board?.ToArray();
     }
 
-    [ICommand]
+    [RelayCommand]
     private void ApplyLayout()
     {
         _boxList.Clear();

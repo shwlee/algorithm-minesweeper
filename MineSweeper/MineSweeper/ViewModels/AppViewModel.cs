@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MineSweeper.Contracts;
 
 namespace MineSweeper.ViewModels;
@@ -16,4 +16,6 @@ public partial class AppViewModel : ObservableRecipient
         _game = game;
         _turn = turn;
     }
+
+
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MineSweeper.Contracts;
 using MineSweeper.Exceptions;
 using MineSweeper.Extensions;
@@ -65,7 +65,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
 
     protected override void OnActivated()
     {
-        Messenger.Register<TurnPlayViewModel, GameMessage>(this, (r, m) => r.GameMessage(m));
+        WeakReferenceMessenger.Default.Register<TurnPlayViewModel, GameMessage>(this, (r, m) => r.GameMessage(m));
     }
 
     private void GameMessage(GameMessage message)
@@ -87,7 +87,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
     }
 
-    [ICommand]
+    [RelayCommand]
     private void LoadPlayers()
     {
         (int columns, int rows) = _gameState.GetColumRows();
@@ -106,7 +106,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         Players = new ObservableCollection<TurnPlayer>(players);
     }
 
-    [ICommand]
+    [RelayCommand]
     private void TurnOne()
     {
         try
@@ -132,7 +132,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
     }
 
-    [ICommand]
+    [RelayCommand]
     private void TurnAll()
     {
         _ = ExecuteTurnAll();
@@ -206,7 +206,7 @@ public partial class TurnPlayViewModel : ObservableRecipient, ITurnProcess
         }
     }
 
-    [ICommand]
+    [RelayCommand]
     private async void AutoTurn()
     {
         if (_gameState.IsInitialized is false)
